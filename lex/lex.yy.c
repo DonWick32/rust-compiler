@@ -772,84 +772,84 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 13 "file.l"
+#line 12 "file.l"
 {printf("%s is a number \n" , yytext);}
 	YY_BREAK
 case 3:
-#line 16 "file.l"
+#line 15 "file.l"
 case 4:
-#line 17 "file.l"
+#line 16 "file.l"
 case 5:
-#line 18 "file.l"
+#line 17 "file.l"
 case 6:
-#line 19 "file.l"
+#line 18 "file.l"
 case 7:
-#line 20 "file.l"
+#line 19 "file.l"
 case 8:
-#line 21 "file.l"
+#line 20 "file.l"
 case 9:
-#line 22 "file.l"
+#line 21 "file.l"
 case 10:
 YY_RULE_SETUP
-#line 22 "file.l"
+#line 21 "file.l"
 {printf("%s is a keyword \n" , yytext);}
 	YY_BREAK
 case 11:
-#line 25 "file.l"
+#line 24 "file.l"
 case 12:
-#line 26 "file.l"
+#line 25 "file.l"
 case 13:
-#line 27 "file.l"
+#line 26 "file.l"
 case 14:
-#line 28 "file.l"
+#line 27 "file.l"
 case 15:
-#line 29 "file.l"
+#line 28 "file.l"
 case 16:
-#line 30 "file.l"
+#line 29 "file.l"
 case 17:
-#line 31 "file.l"
+#line 30 "file.l"
 case 18:
-#line 32 "file.l"
+#line 31 "file.l"
 case 19:
-#line 33 "file.l"
+#line 32 "file.l"
 case 20:
-#line 34 "file.l"
+#line 33 "file.l"
 case 21:
-#line 35 "file.l"
+#line 34 "file.l"
 case 22:
-#line 36 "file.l"
+#line 35 "file.l"
 case 23:
-#line 37 "file.l"
+#line 36 "file.l"
 case 24:
 YY_RULE_SETUP
-#line 37 "file.l"
+#line 36 "file.l"
 {printf("%s is a operator \n" , yytext);}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 39 "file.l"
+#line 38 "file.l"
 {printf("%s is a comment \n" , yytext);}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 41 "file.l"
+#line 40 "file.l"
 {printf("%s is identifier \n" , yytext);}
 	YY_BREAK
 case 27:
 /* rule 27 can match eol */
 YY_RULE_SETUP
-#line 43 "file.l"
+#line 42 "file.l"
 {printf("%s is string \n" , yytext);}
 	YY_BREAK
 case 28:
 /* rule 28 can match eol */
 YY_RULE_SETUP
-#line 47 "file.l"
+#line 46 "file.l"
 { ECHO; /* normal default anyway */ }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 48 "file.l"
+#line 47 "file.l"
 ECHO;
 	YY_BREAK
 #line 856 "lex.yy.c"
@@ -1857,7 +1857,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 48 "file.l"
+#line 47 "file.l"
 
 
 main()
