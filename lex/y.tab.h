@@ -48,58 +48,70 @@ extern int yydebug;
     K_INT = 258,
     K_FLOAT = 259,
     K_CHAR = 260,
-    FOR = 261,
-    WHILE = 262,
-    ELSE = 263,
-    IF = 264,
-    SWITCH = 265,
-    CASE = 266,
-    RETURN = 267,
-    CONTINUE = 268,
-    BREAK = 269,
-    DEFAULT = 270,
-    INTEGER = 271,
-    FLOAT = 272,
-    CHARACTER = 273,
-    STRING = 274,
-    IDENTIFIER = 275,
-    AND = 276,
-    OR = 277,
-    GE = 278,
-    LE = 279,
-    EQ = 280,
-    NE = 281,
-    EOF_TOKEN = 282,
-    ERROR = 283
+    K_STRING = 261,
+    LET = 262,
+    CONST = 263,
+    FUNCTION = 264,
+    MAIN = 265,
+    PRINT = 266,
+    FOR = 267,
+    WHILE = 268,
+    ELSE = 269,
+    IF = 270,
+    SWITCH = 271,
+    CASE = 272,
+    RETURN = 273,
+    CONTINUE = 274,
+    BREAK = 275,
+    DEFAULT = 276,
+    INTEGER = 277,
+    FLOAT = 278,
+    CHARACTER = 279,
+    STRING = 280,
+    IDENTIFIER = 281,
+    AND = 282,
+    OR = 283,
+    GE = 284,
+    LE = 285,
+    EQ = 286,
+    NE = 287,
+    EOF_TOKEN = 288,
+    ERROR = 289
   };
 #endif
 /* Tokens.  */
 #define K_INT 258
 #define K_FLOAT 259
 #define K_CHAR 260
-#define FOR 261
-#define WHILE 262
-#define ELSE 263
-#define IF 264
-#define SWITCH 265
-#define CASE 266
-#define RETURN 267
-#define CONTINUE 268
-#define BREAK 269
-#define DEFAULT 270
-#define INTEGER 271
-#define FLOAT 272
-#define CHARACTER 273
-#define STRING 274
-#define IDENTIFIER 275
-#define AND 276
-#define OR 277
-#define GE 278
-#define LE 279
-#define EQ 280
-#define NE 281
-#define EOF_TOKEN 282
-#define ERROR 283
+#define K_STRING 261
+#define LET 262
+#define CONST 263
+#define FUNCTION 264
+#define MAIN 265
+#define PRINT 266
+#define FOR 267
+#define WHILE 268
+#define ELSE 269
+#define IF 270
+#define SWITCH 271
+#define CASE 272
+#define RETURN 273
+#define CONTINUE 274
+#define BREAK 275
+#define DEFAULT 276
+#define INTEGER 277
+#define FLOAT 278
+#define CHARACTER 279
+#define STRING 280
+#define IDENTIFIER 281
+#define AND 282
+#define OR 283
+#define GE 284
+#define LE 285
+#define EQ 286
+#define NE 287
+#define EOF_TOKEN 288
+#define ERROR 289
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -114,7 +126,7 @@ union YYSTYPE
     IdStruct id;
     char cValue;
 
-#line 118 "y.tab.h" /* yacc.c:1909  */
+#line 130 "y.tab.h" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

@@ -1,5 +1,13 @@
-// input.txt
-int a = 3;
-while(a){
-   printf("%d", a);
+// Hello boss
+
+fn main() {
+    let number : i32 = 3;
+    let num : f32 = 5.0;
+    let word : String = "nice";
+
+    if number < 5 && num > 10.0 {
+        println!("condition was true");
+    } else {
+        println!("condition was false");
+    }
 }
