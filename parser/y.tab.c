@@ -112,7 +112,7 @@
 # define YY_YY_Y_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+# define YYDEBUG 1
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -1389,7 +1389,7 @@ yyreduce:
 
   case 10:
 #line 64 "parser.y" /* yacc.c:1646  */
-    { struct node *iff = mknode((yyvsp[-5].nd_obj).nd, (yyvsp[-2].nd_obj).nd, (yyvsp[-7].nd_obj).name); 	(yyval.nd_obj).nd = mknode(iff, (yyvsp[0].nd_obj).nd, "if-else"); }
+    { struct node *iff = mknode((yyvsp[-5].nd_obj).nd, (yyvsp[-2].nd_obj).nd, (yyvsp[-7].nd_obj).name); 	(yyval.nd_obj).nd = mknode(iff, (yyvsp[0].nd_obj).nd, "IF-ELSE"); }
 #line 1394 "y.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1796,7 +1796,7 @@ yyreturn:
 
 int main() {
     extern FILE *yyin, *yyout;
-   
+    // yydebug = 1;
     int p = -1;
     p = yyparse();
     /* if(success)

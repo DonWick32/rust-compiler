@@ -2,6 +2,7 @@
      #include "y.tab.h"
      int line_no=0;
      char datatype[100] = "PROCEDURE";
+     char identity[100] = "dummy";
 %}
 
 %option yylineno
@@ -41,10 +42,34 @@ digit          [0-9]
 "||"		{ strcpy(yylval.nd_obj.name,(yytext));  return OR; }
 
 
-"i32"		{ strcpy(yylval.nd_obj.name,(yytext)); strcpy(datatype, "INT"); return INT; }
-"f32"		{ strcpy(yylval.nd_obj.name,(yytext)); strcpy(datatype, "FLOAT"); return FLOAT; }
-"char"		{ strcpy(yylval.nd_obj.name,(yytext)); strcpy(datatype, "CHAR"); return CHAR; }
-"bool"		{ strcpy(yylval.nd_obj.name,(yytext)); strcpy(datatype, "BOOL"); return BOOL; }
+"i32"		{ strcpy(yylval.nd_obj.name,(yytext)); strcpy(datatype, "INT"); 
+if(strcmp(identity, "dummy")!=0) 
+						{
+							insertToHash(identity,datatype,yylineno);
+						}
+                  return INT; 
+         }
+"f32"		{ strcpy(yylval.nd_obj.name,(yytext)); strcpy(datatype, "FLOAT"); 
+if(strcmp(identity, "dummy")!=0) 
+						{
+							insertToHash(identity,datatype,yylineno);
+						}
+                  return FLOAT; 
+         }
+"char"		{ strcpy(yylval.nd_obj.name,(yytext)); strcpy(datatype, "CHAR"); 
+if(strcmp(identity, "dummy")!=0) 
+						{
+							insertToHash(identity,datatype,yylineno);
+						}
+                  return CHAR; 
+         }
+"bool"		{ strcpy(yylval.nd_obj.name,(yytext)); strcpy(datatype, "BOOL"); 
+if(strcmp(identity, "dummy")!=0) 
+						{
+							insertToHash(identity,datatype,yylineno);
+						}
+                  return BOOL; 
+         }
 
 \#.*			{ ; }
 [ \t]*			{ ; }
@@ -53,12 +78,17 @@ digit          [0-9]
 
 [-]?{digit}+                		{ strcpy(yylval.nd_obj.name,(yytext));  return NUMBER; }
 [-]?{digit}+\.{digit}{1,6}  		{ strcpy(yylval.nd_obj.name,(yytext));  return FLOAT_NUM; }
-{alphabet}({alphabet}|{digit})*   	{ insertToHash(yytext,datatype,yylineno); strcpy(yylval.nd_obj.name,(yytext));  return ID; }
+{alphabet}({alphabet}|{digit})*   	{ 
+      strcpy(identity, yytext);
+      strcpy(yylval.nd_obj.name,(yytext)); 
+		return ID; 
+   }
 
 ["].*["]                    { strcpy(yylval.nd_obj.name,(yytext));  return STR; }
 ['].[']                     { strcpy(yylval.nd_obj.name,(yytext));  return CHARACTER; }
 
-";"|"="|","|"{"|"}"|"("|")"|"["|"]"|"*"|"+"|"-"|"/"|"?"|":"|"&"|"|"|"^"|"!"|"~"|"%"|"<"|">" { strcpy(yylval.nd_obj.name,(yytext));  return yytext[0];}
+";" { strcpy(datatype, "PROCEDURE"); strcpy(identity, "dummy"); strcpy(yylval.nd_obj.name,(yytext));  return yytext[0];}
+"="|","|"{"|"}"|"("|")"|"["|"]"|"*"|"+"|"-"|"/"|"?"|":"|"&"|"|"|"^"|"!"|"~"|"%"|"<"|">" { strcpy(yylval.nd_obj.name,(yytext));  return yytext[0];}
 
 
 %%
@@ -169,6 +199,7 @@ void displaySymbolTable()
             		//printf("%d\t\t", k++);
             		printf("%s\t\t\t", myNode->token);
             		printf("%s\t\t\t", myNode->attr);
+                  // printf("%d", i);
             		/*for(j=0;j<(myNode->line_count);j++)
             			printf("%d  ",myNode->line[j]);*/
             		printf("\n");

@@ -3,10 +3,10 @@ fn main()
     let x : i32 = 5;
     let c : f32 = 6.8;
     let b : char = 'a';
-    
+
     while(x < 5)
     {
-       if (x != 2){
+       if (x == 3){
         x = x - 1;
        } else {
         println!("Hello");

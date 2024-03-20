@@ -171,6 +171,8 @@ return (63)
 State 0
 
     0 $accept: . program $end
+    1 program: . entry '(' ')' '{' body return '}'
+    2 entry: . ID ID
 
     ID  shift, and go to state 1
 
@@ -230,6 +232,16 @@ State 7
 State 8
 
     1 program: entry '(' ')' '{' . body return '}'
+    6 body: . block body
+    7     | . %empty
+    8 block: . WHILE '(' condition ')' '{' body '}'
+    9      | . IF '(' condition ')' '{' body '}' else
+   10      | . statement ';'
+   11      | . PRINTFF '(' STR ')' ';'
+   12      | . SCANFF '(' STR ',' '&' ID ')' ';'
+   18 statement: . DECLARE ID ':' datatype init
+   19          | . ID '=' expression
+   20          | . ID relop expression
 
     DECLARE  shift, and go to state 9
     PRINTFF  shift, and go to state 10
@@ -284,6 +296,12 @@ State 14
 
    19 statement: ID . '=' expression
    20          | ID . relop expression
+   37 relop: . LT
+   38      | . GT
+   39      | . LE
+   40      | . GE
+   41      | . EQ
+   42      | . NE
 
     LE   shift, and go to state 23
     GE   shift, and go to state 24
@@ -299,6 +317,8 @@ State 14
 State 15
 
     1 program: entry '(' ')' '{' body . return '}'
+   47 return: . RETURN value ';'
+   48       | . %empty
 
     RETURN  shift, and go to state 31
 
@@ -309,7 +329,17 @@ State 15
 
 State 16
 
-    6 body: block . body
+    6 body: . block body
+    6     | block . body
+    7     | . %empty
+    8 block: . WHILE '(' condition ')' '{' body '}'
+    9      | . IF '(' condition ')' '{' body '}' else
+   10      | . statement ';'
+   11      | . PRINTFF '(' STR ')' ';'
+   12      | . SCANFF '(' STR ',' '&' ID ')' ';'
+   18 statement: . DECLARE ID ':' datatype init
+   19          | . ID '=' expression
+   20          | . ID relop expression
 
     DECLARE  shift, and go to state 9
     PRINTFF  shift, and go to state 10
@@ -356,6 +386,13 @@ State 20
 State 21
 
     8 block: WHILE '(' . condition ')' '{' body '}'
+   15 condition: . value relop value
+   16          | . TRUE
+   17          | . FALSE
+   43 value: . NUMBER
+   44      | . FLOAT_NUM
+   45      | . CHARACTER
+   46      | . ID
 
     CHARACTER  shift, and go to state 38
     TRUE       shift, and go to state 39
@@ -371,6 +408,13 @@ State 21
 State 22
 
     9 block: IF '(' . condition ')' '{' body '}' else
+   15 condition: . value relop value
+   16          | . TRUE
+   17          | . FALSE
+   43 value: . NUMBER
+   44      | . FLOAT_NUM
+   45      | . CHARACTER
+   46      | . ID
 
     CHARACTER  shift, and go to state 38
     TRUE       shift, and go to state 39
@@ -428,6 +472,19 @@ State 28
 State 29
 
    19 statement: ID '=' . expression
+   23 expression: . expression addops term
+   24           | . term
+   25 term: . term mulops factor
+   26     | . factor
+   27 factor: . base exponent base
+   28       | . LOG '(' value ',' value ')'
+   29       | . base
+   30 base: . value
+   31     | . '(' expression ')'
+   43 value: . NUMBER
+   44      | . FLOAT_NUM
+   45      | . CHARACTER
+   46      | . ID
 
     CHARACTER  shift, and go to state 38
     NUMBER     shift, and go to state 41
@@ -446,6 +503,19 @@ State 29
 State 30
 
    20 statement: ID relop . expression
+   23 expression: . expression addops term
+   24           | . term
+   25 term: . term mulops factor
+   26     | . factor
+   27 factor: . base exponent base
+   28       | . LOG '(' value ',' value ')'
+   29       | . base
+   30 base: . value
+   31     | . '(' expression ')'
+   43 value: . NUMBER
+   44      | . FLOAT_NUM
+   45      | . CHARACTER
+   46      | . ID
 
     CHARACTER  shift, and go to state 38
     NUMBER     shift, and go to state 41
@@ -463,6 +533,10 @@ State 30
 
 State 31
 
+   43 value: . NUMBER
+   44      | . FLOAT_NUM
+   45      | . CHARACTER
+   46      | . ID
    47 return: RETURN . value ';'
 
     CHARACTER  shift, and go to state 38
@@ -496,6 +570,9 @@ State 34
 
 State 35
 
+    3 datatype: . INT
+    4         | . FLOAT
+    5         | . CHAR
    18 statement: DECLARE ID ':' . datatype init
 
     INT    shift, and go to state 57
@@ -571,6 +648,12 @@ State 44
 State 45
 
    15 condition: value . relop value
+   37 relop: . LT
+   38      | . GT
+   39      | . LE
+   40      | . GE
+   41      | . EQ
+   42      | . NE
 
     LE  shift, and go to state 23
     GE  shift, and go to state 24
@@ -598,7 +681,20 @@ State 47
 
 State 48
 
-   31 base: '(' . expression ')'
+   23 expression: . expression addops term
+   24           | . term
+   25 term: . term mulops factor
+   26     | . factor
+   27 factor: . base exponent base
+   28       | . LOG '(' value ',' value ')'
+   29       | . base
+   30 base: . value
+   31     | . '(' expression ')'
+   31     | '(' . expression ')'
+   43 value: . NUMBER
+   44      | . FLOAT_NUM
+   45      | . CHARACTER
+   46      | . ID
 
     CHARACTER  shift, and go to state 38
     NUMBER     shift, and go to state 41
@@ -618,6 +714,8 @@ State 49
 
    19 statement: ID '=' expression .
    23 expression: expression . addops term
+   35 addops: . ADD
+   36       | . SUB
 
     ADD  shift, and go to state 68
     SUB  shift, and go to state 69
@@ -631,6 +729,8 @@ State 50
 
    24 expression: term .
    25 term: term . mulops factor
+   33 mulops: . MULT
+   34       | . DIV
 
     MULT  shift, and go to state 71
     DIV   shift, and go to state 72
@@ -651,6 +751,7 @@ State 52
 
    27 factor: base . exponent base
    29       | base .
+   32 exponent: . POW
 
     POW  shift, and go to state 74
 
@@ -670,6 +771,8 @@ State 54
 
    20 statement: ID relop expression .
    23 expression: expression . addops term
+   35 addops: . ADD
+   36       | . SUB
 
     ADD  shift, and go to state 68
     SUB  shift, and go to state 69
@@ -717,6 +820,8 @@ State 59
 State 60
 
    18 statement: DECLARE ID ':' datatype . init
+   21 init: . '=' value
+   22     | . %empty
 
     '='  shift, and go to state 77
 
@@ -749,6 +854,10 @@ State 63
 State 64
 
    15 condition: value relop . value
+   43 value: . NUMBER
+   44      | . FLOAT_NUM
+   45      | . CHARACTER
+   46      | . ID
 
     CHARACTER  shift, and go to state 38
     NUMBER     shift, and go to state 41
@@ -768,6 +877,10 @@ State 65
 State 66
 
    28 factor: LOG '(' . value ',' value ')'
+   43 value: . NUMBER
+   44      | . FLOAT_NUM
+   45      | . CHARACTER
+   46      | . ID
 
     CHARACTER  shift, and go to state 38
     NUMBER     shift, and go to state 41
@@ -781,6 +894,8 @@ State 67
 
    23 expression: expression . addops term
    31 base: '(' expression . ')'
+   35 addops: . ADD
+   36       | . SUB
 
     ADD  shift, and go to state 68
     SUB  shift, and go to state 69
@@ -806,6 +921,17 @@ State 69
 State 70
 
    23 expression: expression addops . term
+   25 term: . term mulops factor
+   26     | . factor
+   27 factor: . base exponent base
+   28       | . LOG '(' value ',' value ')'
+   29       | . base
+   30 base: . value
+   31     | . '(' expression ')'
+   43 value: . NUMBER
+   44      | . FLOAT_NUM
+   45      | . CHARACTER
+   46      | . ID
 
     CHARACTER  shift, and go to state 38
     NUMBER     shift, and go to state 41
@@ -837,6 +963,15 @@ State 72
 State 73
 
    25 term: term mulops . factor
+   27 factor: . base exponent base
+   28       | . LOG '(' value ',' value ')'
+   29       | . base
+   30 base: . value
+   31     | . '(' expression ')'
+   43 value: . NUMBER
+   44      | . FLOAT_NUM
+   45      | . CHARACTER
+   46      | . ID
 
     CHARACTER  shift, and go to state 38
     NUMBER     shift, and go to state 41
@@ -860,6 +995,12 @@ State 74
 State 75
 
    27 factor: base exponent . base
+   30 base: . value
+   31     | . '(' expression ')'
+   43 value: . NUMBER
+   44      | . FLOAT_NUM
+   45      | . CHARACTER
+   46      | . ID
 
     CHARACTER  shift, and go to state 38
     NUMBER     shift, and go to state 41
@@ -881,6 +1022,10 @@ State 76
 State 77
 
    21 init: '=' . value
+   43 value: . NUMBER
+   44      | . FLOAT_NUM
+   45      | . CHARACTER
+   46      | . ID
 
     CHARACTER  shift, and go to state 38
     NUMBER     shift, and go to state 41
@@ -913,7 +1058,17 @@ State 80
 
 State 81
 
-    8 block: WHILE '(' condition ')' '{' . body '}'
+    6 body: . block body
+    7     | . %empty
+    8 block: . WHILE '(' condition ')' '{' body '}'
+    8      | WHILE '(' condition ')' '{' . body '}'
+    9      | . IF '(' condition ')' '{' body '}' else
+   10      | . statement ';'
+   11      | . PRINTFF '(' STR ')' ';'
+   12      | . SCANFF '(' STR ',' '&' ID ')' ';'
+   18 statement: . DECLARE ID ':' datatype init
+   19          | . ID '=' expression
+   20          | . ID relop expression
 
     DECLARE  shift, and go to state 9
     PRINTFF  shift, and go to state 10
@@ -938,7 +1093,17 @@ State 82
 
 State 83
 
-    9 block: IF '(' condition ')' '{' . body '}' else
+    6 body: . block body
+    7     | . %empty
+    8 block: . WHILE '(' condition ')' '{' body '}'
+    9      | . IF '(' condition ')' '{' body '}' else
+    9      | IF '(' condition ')' '{' . body '}' else
+   10      | . statement ';'
+   11      | . PRINTFF '(' STR ')' ';'
+   12      | . SCANFF '(' STR ',' '&' ID ')' ';'
+   18 statement: . DECLARE ID ':' datatype init
+   19          | . ID '=' expression
+   20          | . ID relop expression
 
     DECLARE  shift, and go to state 9
     PRINTFF  shift, and go to state 10
@@ -972,6 +1137,8 @@ State 86
 
    23 expression: expression addops term .
    25 term: term . mulops factor
+   33 mulops: . MULT
+   34       | . DIV
 
     MULT  shift, and go to state 71
     DIV   shift, and go to state 72
@@ -1026,6 +1193,10 @@ State 92
 State 93
 
    28 factor: LOG '(' value ',' . value ')'
+   43 value: . NUMBER
+   44      | . FLOAT_NUM
+   45      | . CHARACTER
+   46      | . ID
 
     CHARACTER  shift, and go to state 38
     NUMBER     shift, and go to state 41
@@ -1052,6 +1223,8 @@ State 95
 State 96
 
     9 block: IF '(' condition ')' '{' body '}' . else
+   13 else: . ELSE '{' body '}'
+   14     | . %empty
 
     ELSE  shift, and go to state 99
 
@@ -1097,7 +1270,17 @@ State 101
 
 State 102
 
+    6 body: . block body
+    7     | . %empty
+    8 block: . WHILE '(' condition ')' '{' body '}'
+    9      | . IF '(' condition ')' '{' body '}' else
+   10      | . statement ';'
+   11      | . PRINTFF '(' STR ')' ';'
+   12      | . SCANFF '(' STR ',' '&' ID ')' ';'
    13 else: ELSE '{' . body '}'
+   18 statement: . DECLARE ID ':' datatype init
+   19          | . ID '=' expression
+   20          | . ID relop expression
 
     DECLARE  shift, and go to state 9
     PRINTFF  shift, and go to state 10

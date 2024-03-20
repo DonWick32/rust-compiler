@@ -138,7 +138,7 @@ return: RETURN value ';'  { $1.nd = mknode(NULL, NULL, "RETURN"); $$.nd = mknode
 
 int main() {
     extern FILE *yyin, *yyout;
-   
+    yydebug = 1; // This is needed to show the trace of the parser having action, state and token
     int p = -1;
     p = yyparse();
     /* if(success)
