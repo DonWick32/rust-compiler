@@ -61,7 +61,7 @@ body: block body {$$.nd = mknode($1.nd, $2.nd, "BODY");}
 ;
 
 block: WHILE '(' condition ')' '{' body '}' { $$.nd = mknode($3.nd, $6.nd, $1.name); }
-| IF '(' condition ')' '{' body '}' else { struct node *iff = mknode($3.nd, $6.nd, $1.name); 	$$.nd = mknode(iff, $8.nd, "IF-ELSE); }
+| IF '(' condition ')' '{' body '}' else { struct node *iff = mknode($3.nd, $6.nd, $1.name); 	$$.nd = mknode(iff, $8.nd, "IF-ELSE"); }
 | statement ';' { $$.nd = $1.nd; }
 | PRINTFF '(' STR ')' ';' { $$.nd = mknode(NULL, NULL, "PRINT"); }
 | SCANFF '(' STR ',' '&' ID ')' ';' { $$.nd = mknode(NULL, NULL, "SCAN"); }
