@@ -34,7 +34,7 @@
 # define YY_YY_Y_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 1
+# define YYDEBUG 0
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -45,87 +45,91 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    DECLARE = 258,
+    VOID = 258,
     CHARACTER = 259,
     PRINTFF = 260,
     SCANFF = 261,
     INT = 262,
-    BOOL = 263,
-    FLOAT = 264,
-    CHAR = 265,
-    WHILE = 266,
-    IF = 267,
-    ELSE = 268,
-    TRUE = 269,
-    FALSE = 270,
-    NUMBER = 271,
-    FLOAT_NUM = 272,
-    ID = 273,
-    LE = 274,
-    GE = 275,
-    EQ = 276,
-    NE = 277,
-    GT = 278,
-    LT = 279,
-    AND = 280,
-    OR = 281,
-    STR = 282,
-    ADD = 283,
-    MULT = 284,
-    DIV = 285,
-    SUB = 286,
-    RETURN = 287,
-    LOG = 288,
-    POW = 289
+    FLOAT = 263,
+    CHAR = 264,
+    FOR = 265,
+    IF = 266,
+    ELSE = 267,
+    TRUE = 268,
+    FALSE = 269,
+    NUMBER = 270,
+    FLOAT_NUM = 271,
+    ID = 272,
+    LE = 273,
+    GE = 274,
+    EQ = 275,
+    NE = 276,
+    GT = 277,
+    LT = 278,
+    AND = 279,
+    OR = 280,
+    STR = 281,
+    ADD = 282,
+    MULTIPLY = 283,
+    DIVIDE = 284,
+    SUBTRACT = 285,
+    UNARY = 286,
+    INCLUDE = 287,
+    RETURN = 288
   };
 #endif
 /* Tokens.  */
-#define DECLARE 258
+#define VOID 258
 #define CHARACTER 259
 #define PRINTFF 260
 #define SCANFF 261
 #define INT 262
-#define BOOL 263
-#define FLOAT 264
-#define CHAR 265
-#define WHILE 266
-#define IF 267
-#define ELSE 268
-#define TRUE 269
-#define FALSE 270
-#define NUMBER 271
-#define FLOAT_NUM 272
-#define ID 273
-#define LE 274
-#define GE 275
-#define EQ 276
-#define NE 277
-#define GT 278
-#define LT 279
-#define AND 280
-#define OR 281
-#define STR 282
-#define ADD 283
-#define MULT 284
-#define DIV 285
-#define SUB 286
-#define RETURN 287
-#define LOG 288
-#define POW 289
+#define FLOAT 263
+#define CHAR 264
+#define FOR 265
+#define IF 266
+#define ELSE 267
+#define TRUE 268
+#define FALSE 269
+#define NUMBER 270
+#define FLOAT_NUM 271
+#define ID 272
+#define LE 273
+#define GE 274
+#define EQ 275
+#define NE 276
+#define GT 277
+#define LT 278
+#define AND 279
+#define OR 280
+#define STR 281
+#define ADD 282
+#define MULTIPLY 283
+#define DIVIDE 284
+#define SUBTRACT 285
+#define UNARY 286
+#define INCLUDE 287
+#define RETURN 288
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 28 "parser.y" /* yacc.c:1909  */
- 
-	struct var_name { 
-		char name[100]; 
-		struct node* nd;
-	} nd_obj; 
+#line 48 "sem.y" /* yacc.c:1909  */
+ struct var_name { 
+			char name[100]; 
+			struct node* nd;
+		} nd_obj;
 
-#line 129 "y.tab.h" /* yacc.c:1909  */
+		struct var_name2 { 
+			char name[100]; 
+			struct node* nd;
+			char type[5];
+		} nd_obj2; 
+	
+
+#line 133 "y.tab.h" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
