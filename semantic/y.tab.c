@@ -78,18 +78,21 @@
 	void insert_type();
 	void print_tree(struct node*);
     void printBT(struct node*);
+    void printST(struct node*);
 	void print_inorder(struct node *);
     void check_declaration(char *);
 	void check_return_type(char *);
 	int check_types(char *, char *);
 	char *get_type(char *);
 	struct node* mknode(struct node *left, struct node *right, char *token);
+    // struct syntax_node* mknode_syntax(struct node *left, struct node *right, char *token);
 
     struct dataType {
         char * id_name;
         char * data_type;
         char * type;
         int line_no;
+        int value;
 	} symbol_table[40];
 
     int count=0;
@@ -97,6 +100,7 @@
 	char type[10];
     extern int countn;
 	struct node *head;
+    // struct node *syntax_head;
 	int sem_errors=0;
 	int label=0;
 	char buff[100];
@@ -106,11 +110,13 @@
 	struct node { 
 		struct node *left; 
 		struct node *right; 
-		char *token; 
+		char *token;
+        char *lexeme;
+        int value;
+        int isId;
 	};
 
-
-#line 114 "y.tab.c" /* yacc.c:339  */
+#line 120 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -214,21 +220,24 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 49 "sem.y" /* yacc.c:355  */
+#line 55 "sem.y" /* yacc.c:355  */
  struct var_name { 
 			char name[100]; 
 			struct node* nd;
+            struct syntax_node* sd;
+            int value;
 		} nd_obj;
 
 		struct var_name2 { 
 			char name[100]; 
 			struct node* nd;
+            struct syntax_node* sd;
 			char type[5];
             int value;
 		} nd_obj2; 
 	
 
-#line 232 "y.tab.c" /* yacc.c:355  */
+#line 241 "y.tab.c" /* yacc.c:355  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
@@ -243,7 +252,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 247 "y.tab.c" /* yacc.c:358  */
+#line 256 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -543,12 +552,12 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    71,    71,    76,    79,    80,    81,    82,    85,    85,
-      90,    90,    94,    95,    96,    96,    97,    97,   100,   100,
-     101,   104,   105,   106,   107,   110,   110,   143,   143,   184,
-     184,   185,   185,   190,   198,   199,   202,   240,   243,   244,
-     245,   246,   249,   250,   251,   252,   253,   254,   257,   258,
-     259,   260,   263,   263,   264
+       0,    80,    80,    86,    93,    94,    95,    96,    99,    99,
+     104,   104,   109,   110,   111,   111,   123,   123,   126,   126,
+     127,   130,   146,   147,   148,   151,   151,   205,   205,   259,
+     259,   260,   260,   265,   273,   277,   283,   336,   341,   342,
+     343,   344,   347,   348,   349,   350,   351,   352,   355,   360,
+     361,   362,   378,   378,   379
 };
 #endif
 
@@ -1394,162 +1403,205 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 71 "sem.y" /* yacc.c:1646  */
+#line 80 "sem.y" /* yacc.c:1646  */
     { (yyvsp[-6].nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[-1].nd_obj).nd, "main"); (yyval.nd_obj).nd = mknode((yyvsp[-6].nd_obj).nd, NULL, "program"); 
 	head = (yyval.nd_obj).nd;
+    (yyval.nd_obj).nd->lexeme = "fn main";
 }
-#line 1402 "y.tab.c" /* yacc.c:1646  */
+#line 1412 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 76 "sem.y" /* yacc.c:1646  */
-    { add('H'); }
-#line 1408 "y.tab.c" /* yacc.c:1646  */
+#line 86 "sem.y" /* yacc.c:1646  */
+    { 
+    add('H');
+    (yyval.nd_obj).nd = mknode((yyvsp[-1].nd_obj).nd, (yyvsp[0].nd_obj).nd, "main");
+    
+}
+#line 1422 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 79 "sem.y" /* yacc.c:1646  */
+#line 93 "sem.y" /* yacc.c:1646  */
     { insert_type(); }
-#line 1414 "y.tab.c" /* yacc.c:1646  */
+#line 1428 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 80 "sem.y" /* yacc.c:1646  */
+#line 94 "sem.y" /* yacc.c:1646  */
     { insert_type(); }
-#line 1420 "y.tab.c" /* yacc.c:1646  */
+#line 1434 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 81 "sem.y" /* yacc.c:1646  */
+#line 95 "sem.y" /* yacc.c:1646  */
     { insert_type(); }
-#line 1426 "y.tab.c" /* yacc.c:1646  */
+#line 1440 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 82 "sem.y" /* yacc.c:1646  */
+#line 96 "sem.y" /* yacc.c:1646  */
     { insert_type(); }
-#line 1432 "y.tab.c" /* yacc.c:1646  */
+#line 1446 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 85 "sem.y" /* yacc.c:1646  */
+#line 99 "sem.y" /* yacc.c:1646  */
     { add('K'); }
-#line 1438 "y.tab.c" /* yacc.c:1646  */
+#line 1452 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 85 "sem.y" /* yacc.c:1646  */
+#line 99 "sem.y" /* yacc.c:1646  */
     { 
 	struct node *temp = mknode((yyvsp[-6].nd_obj).nd, (yyvsp[-4].nd_obj).nd, "CONDITION"); 
 	struct node *temp2 = mknode((yyvsp[-8].nd_obj).nd, temp, "CONDITION"); 
 	(yyval.nd_obj).nd = mknode(temp2, (yyvsp[-1].nd_obj).nd, (yyvsp[-11].nd_obj).name); 
 }
-#line 1448 "y.tab.c" /* yacc.c:1646  */
+#line 1462 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 90 "sem.y" /* yacc.c:1646  */
+#line 104 "sem.y" /* yacc.c:1646  */
     { add('K'); }
-#line 1454 "y.tab.c" /* yacc.c:1646  */
+#line 1468 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 90 "sem.y" /* yacc.c:1646  */
+#line 104 "sem.y" /* yacc.c:1646  */
     { 
 	struct node *iff = mknode((yyvsp[-5].nd_obj).nd, (yyvsp[-2].nd_obj).nd, (yyvsp[-8].nd_obj).name); 
-	(yyval.nd_obj).nd = mknode(iff, (yyvsp[0].nd_obj).nd, "if-else"); 
+	(yyval.nd_obj).nd = mknode(iff, (yyvsp[0].nd_obj).nd, "if-else");
+    (yyval.nd_obj).nd->lexeme = "if";
 }
-#line 1463 "y.tab.c" /* yacc.c:1646  */
+#line 1478 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 94 "sem.y" /* yacc.c:1646  */
+#line 109 "sem.y" /* yacc.c:1646  */
     { (yyval.nd_obj).nd = (yyvsp[-1].nd_obj).nd; }
-#line 1469 "y.tab.c" /* yacc.c:1646  */
+#line 1484 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 95 "sem.y" /* yacc.c:1646  */
+#line 110 "sem.y" /* yacc.c:1646  */
     { (yyval.nd_obj).nd = mknode((yyvsp[-1].nd_obj).nd, (yyvsp[0].nd_obj).nd, "statements"); }
-#line 1475 "y.tab.c" /* yacc.c:1646  */
+#line 1490 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 96 "sem.y" /* yacc.c:1646  */
+#line 111 "sem.y" /* yacc.c:1646  */
     { add('K'); }
-#line 1481 "y.tab.c" /* yacc.c:1646  */
+#line 1496 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 96 "sem.y" /* yacc.c:1646  */
-    { (yyval.nd_obj).nd = mknode(NULL, NULL, "println!"); }
-#line 1487 "y.tab.c" /* yacc.c:1646  */
+#line 111 "sem.y" /* yacc.c:1646  */
+    { (yyval.nd_obj).nd = mknode(NULL, NULL, "println!"); 
+    
+    char* result = (char*)malloc(strlen("println!") + strlen((yyvsp[-2].nd_obj).name) + 1); // +1 for null terminator
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    strcpy(result, "println! ");
+    strcat(result, (yyvsp[-2].nd_obj).name);
+    (yyval.nd_obj).nd->lexeme = result;
+}
+#line 1513 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 97 "sem.y" /* yacc.c:1646  */
+#line 123 "sem.y" /* yacc.c:1646  */
     { add('K'); }
-#line 1493 "y.tab.c" /* yacc.c:1646  */
+#line 1519 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 97 "sem.y" /* yacc.c:1646  */
+#line 123 "sem.y" /* yacc.c:1646  */
     { (yyval.nd_obj).nd = mknode(NULL, NULL, "input"); }
-#line 1499 "y.tab.c" /* yacc.c:1646  */
+#line 1525 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 100 "sem.y" /* yacc.c:1646  */
+#line 126 "sem.y" /* yacc.c:1646  */
     { add('K'); }
-#line 1505 "y.tab.c" /* yacc.c:1646  */
+#line 1531 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 100 "sem.y" /* yacc.c:1646  */
-    { (yyval.nd_obj).nd = mknode(NULL, (yyvsp[-1].nd_obj).nd, (yyvsp[-4].nd_obj).name); }
-#line 1511 "y.tab.c" /* yacc.c:1646  */
+#line 126 "sem.y" /* yacc.c:1646  */
+    { (yyval.nd_obj).nd = mknode(NULL, (yyvsp[-1].nd_obj).nd, (yyvsp[-4].nd_obj).name); (yyval.nd_obj).nd->lexeme = "else"; }
+#line 1537 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 101 "sem.y" /* yacc.c:1646  */
+#line 127 "sem.y" /* yacc.c:1646  */
     { (yyval.nd_obj).nd = NULL; }
-#line 1517 "y.tab.c" /* yacc.c:1646  */
+#line 1543 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 104 "sem.y" /* yacc.c:1646  */
-    { (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj2).nd, (yyvsp[0].nd_obj2).nd, (yyvsp[-1].nd_obj).name); }
-#line 1523 "y.tab.c" /* yacc.c:1646  */
+#line 130 "sem.y" /* yacc.c:1646  */
+    { 
+    (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj2).nd, (yyvsp[0].nd_obj2).nd, (yyvsp[-1].nd_obj).name);
+    char* result = (char*)malloc(strlen((yyvsp[-2].nd_obj2).nd->lexeme) + strlen((yyvsp[-1].nd_obj).name) + strlen((yyvsp[0].nd_obj2).nd->lexeme) + 5); // +1 for null terminator
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    strcpy(result, (yyvsp[-2].nd_obj2).nd->lexeme);
+    strcat(result, " ");
+    strcat(result, (yyvsp[-1].nd_obj).name);
+    strcat(result, " ");
+    strcat(result, (yyvsp[0].nd_obj2).nd->lexeme);
+    (yyval.nd_obj).nd->lexeme = result;
+
+    }
+#line 1564 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 105 "sem.y" /* yacc.c:1646  */
+#line 146 "sem.y" /* yacc.c:1646  */
     { add('K'); (yyval.nd_obj).nd = NULL; }
-#line 1529 "y.tab.c" /* yacc.c:1646  */
+#line 1570 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 106 "sem.y" /* yacc.c:1646  */
+#line 147 "sem.y" /* yacc.c:1646  */
     { add('K'); (yyval.nd_obj).nd = NULL; }
-#line 1535 "y.tab.c" /* yacc.c:1646  */
+#line 1576 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 107 "sem.y" /* yacc.c:1646  */
+#line 148 "sem.y" /* yacc.c:1646  */
     { (yyval.nd_obj).nd = NULL; }
-#line 1541 "y.tab.c" /* yacc.c:1646  */
+#line 1582 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 110 "sem.y" /* yacc.c:1646  */
+#line 151 "sem.y" /* yacc.c:1646  */
     { add('V'); }
-#line 1547 "y.tab.c" /* yacc.c:1646  */
+#line 1588 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 110 "sem.y" /* yacc.c:1646  */
+#line 151 "sem.y" /* yacc.c:1646  */
     { 
-	(yyvsp[-2].nd_obj).nd = mknode(NULL, NULL, (yyvsp[-2].nd_obj).name); 
+	(yyvsp[-2].nd_obj).nd = mknode(NULL, NULL, (yyvsp[-2].nd_obj).name);
+
+    // char* result = (char*)malloc(strlen($1.type) + strlen($2.name) + 1); // +1 for null terminator
+    // if (result == NULL) {
+    //     fprintf(stderr, "Memory allocation failed\n");
+    //     exit(EXIT_FAILURE);
+    // }
+    
+    (yyvsp[-2].nd_obj).nd->lexeme = (yyvsp[-2].nd_obj).name;
+
+    (yyvsp[-2].nd_obj).nd->isId = 1;
+
 	int t = check_types((yyvsp[-3].nd_obj).name, (yyvsp[0].nd_obj2).type); 
 	if(t>0) { 
 		if(t == 1) {
@@ -1578,22 +1630,35 @@ yyreduce:
 		}
 	} 
 	else { 
-		(yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj2).nd, "declaration"); 
+		(yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj2).nd, "declaration");
+        (yyval.nd_obj).value = (yyvsp[0].nd_obj2).value; 
+        (yyval.nd_obj).nd->value = (yyval.nd_obj).value;
+        (yyvsp[-2].nd_obj).value = (yyval.nd_obj).value;
+        (yyvsp[-2].nd_obj).nd->value = (yyval.nd_obj).value;
+
+        for(int i=0; i<count; i++) {
+            if(!strcmp(symbol_table[i].id_name, (yyvsp[-2].nd_obj).name)) {
+                symbol_table[i].value = (yyval.nd_obj).value;
+            }
+        }
 	} 
 }
-#line 1585 "y.tab.c" /* yacc.c:1646  */
+#line 1647 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 143 "sem.y" /* yacc.c:1646  */
+#line 205 "sem.y" /* yacc.c:1646  */
     { check_declaration((yyvsp[0].nd_obj).name); }
-#line 1591 "y.tab.c" /* yacc.c:1646  */
+#line 1653 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 143 "sem.y" /* yacc.c:1646  */
+#line 205 "sem.y" /* yacc.c:1646  */
     {
 	(yyvsp[-3].nd_obj).nd = mknode(NULL, NULL, (yyvsp[-3].nd_obj).name); 
+    (yyvsp[-3].nd_obj).nd->isId = 1;
+    (yyvsp[-3].nd_obj).nd->lexeme = (yyvsp[-3].nd_obj).name;
+
 	char *id_type = get_type((yyvsp[-3].nd_obj).name); 
 	if(strcmp(id_type, (yyvsp[0].nd_obj2).type)) {
 		if(!strcmp(id_type, "i32")) {
@@ -1631,68 +1696,99 @@ yyreduce:
 	}
 	else {
 		(yyval.nd_obj).nd = mknode((yyvsp[-3].nd_obj).nd, (yyvsp[0].nd_obj2).nd, "="); 
+        (yyval.nd_obj).value = (yyvsp[0].nd_obj2).value; 
+        (yyval.nd_obj).nd->value = (yyval.nd_obj).value; 
+        (yyvsp[-3].nd_obj).value = (yyval.nd_obj).value;
+        (yyvsp[-3].nd_obj).nd->value = (yyval.nd_obj).value;
+
+        // for(int i=0; i<count; i++) {
+        //     if(!strcmp(symbol_table[i].id_name, $1.name)) {
+        //         symbol_table[i].value = $$.value;
+        //     }
+        // }
 	}
 }
-#line 1637 "y.tab.c" /* yacc.c:1646  */
+#line 1712 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 184 "sem.y" /* yacc.c:1646  */
+#line 259 "sem.y" /* yacc.c:1646  */
     { check_declaration((yyvsp[0].nd_obj).name); }
-#line 1643 "y.tab.c" /* yacc.c:1646  */
+#line 1718 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 184 "sem.y" /* yacc.c:1646  */
+#line 259 "sem.y" /* yacc.c:1646  */
     { (yyvsp[-3].nd_obj).nd = mknode(NULL, NULL, (yyvsp[-3].nd_obj).name); (yyval.nd_obj).nd = mknode((yyvsp[-3].nd_obj).nd, (yyvsp[0].nd_obj2).nd, (yyvsp[-1].nd_obj).name); }
-#line 1649 "y.tab.c" /* yacc.c:1646  */
+#line 1724 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 185 "sem.y" /* yacc.c:1646  */
+#line 260 "sem.y" /* yacc.c:1646  */
     { check_declaration((yyvsp[0].nd_obj).name); }
-#line 1655 "y.tab.c" /* yacc.c:1646  */
+#line 1730 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 185 "sem.y" /* yacc.c:1646  */
+#line 260 "sem.y" /* yacc.c:1646  */
     { 
 	(yyvsp[-2].nd_obj).nd = mknode(NULL, NULL, (yyvsp[-2].nd_obj).name); 
 	(yyvsp[0].nd_obj).nd = mknode(NULL, NULL, (yyvsp[0].nd_obj).name); 
 	(yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj).nd, (yyvsp[0].nd_obj).nd, "ITERATOR");  
 }
-#line 1665 "y.tab.c" /* yacc.c:1646  */
+#line 1740 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 190 "sem.y" /* yacc.c:1646  */
+#line 265 "sem.y" /* yacc.c:1646  */
     { 
 	check_declaration((yyvsp[0].nd_obj).name); 
 	(yyvsp[-1].nd_obj).nd = mknode(NULL, NULL, (yyvsp[-1].nd_obj).name); 
 	(yyvsp[0].nd_obj).nd = mknode(NULL, NULL, (yyvsp[0].nd_obj).name); 
 	(yyval.nd_obj).nd = mknode((yyvsp[-1].nd_obj).nd, (yyvsp[0].nd_obj).nd, "ITERATOR"); 
 }
-#line 1676 "y.tab.c" /* yacc.c:1646  */
+#line 1751 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 198 "sem.y" /* yacc.c:1646  */
-    { (yyval.nd_obj2).nd = (yyvsp[0].nd_obj2).nd; sprintf((yyval.nd_obj2).type, (yyvsp[0].nd_obj2).type); strcpy((yyval.nd_obj2).name, (yyvsp[0].nd_obj2).name); }
-#line 1682 "y.tab.c" /* yacc.c:1646  */
+#line 273 "sem.y" /* yacc.c:1646  */
+    { (yyval.nd_obj2).nd = (yyvsp[0].nd_obj2).nd; sprintf((yyval.nd_obj2).type, (yyvsp[0].nd_obj2).type); strcpy((yyval.nd_obj2).name, (yyvsp[0].nd_obj2).name); 
+    (yyval.nd_obj2).value = (yyvsp[0].nd_obj2).value;
+    (yyval.nd_obj2).nd->value = (yyval.nd_obj2).value;
+}
+#line 1760 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 199 "sem.y" /* yacc.c:1646  */
-    { sprintf((yyval.nd_obj2).type, "null"); (yyval.nd_obj2).nd = mknode(NULL, NULL, "NULL"); strcpy((yyval.nd_obj2).name, "NULL"); }
-#line 1688 "y.tab.c" /* yacc.c:1646  */
+#line 277 "sem.y" /* yacc.c:1646  */
+    { sprintf((yyval.nd_obj2).type, "null"); (yyval.nd_obj2).nd = mknode(NULL, NULL, "NULL"); strcpy((yyval.nd_obj2).name, "NULL"); 
+    (yyval.nd_obj2).value = 0; 
+    (yyval.nd_obj2).nd->value = (yyval.nd_obj2).value;
+}
+#line 1769 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 202 "sem.y" /* yacc.c:1646  */
+#line 283 "sem.y" /* yacc.c:1646  */
     { 
 	if(!strcmp((yyvsp[-2].nd_obj2).type, (yyvsp[0].nd_obj2).type)) {
 		sprintf((yyval.nd_obj2).type, (yyvsp[-2].nd_obj2).type);
-		(yyval.nd_obj2).nd = mknode((yyvsp[-2].nd_obj2).nd, (yyvsp[0].nd_obj2).nd, (yyvsp[-1].nd_obj).name); 
+		(yyval.nd_obj2).nd = mknode((yyvsp[-2].nd_obj2).nd, (yyvsp[0].nd_obj2).nd, (yyvsp[-1].nd_obj).name);
+
+        if(!strcmp((yyvsp[-1].nd_obj).name, "+")) {
+            (yyval.nd_obj2).value = (yyvsp[-2].nd_obj2).value + (yyvsp[0].nd_obj2).value;
+        }
+        else if(!strcmp((yyvsp[-1].nd_obj).name, "-")) {
+            (yyval.nd_obj2).value = (yyvsp[-2].nd_obj2).value - (yyvsp[0].nd_obj2).value;
+        }
+        else if(!strcmp((yyvsp[-1].nd_obj).name, "*")) {
+            (yyval.nd_obj2).value = (yyvsp[-2].nd_obj2).value * (yyvsp[0].nd_obj2).value;
+        }
+        else {
+            (yyval.nd_obj2).value = (yyvsp[-2].nd_obj2).value / (yyvsp[0].nd_obj2).value;
+        }
+
+        (yyval.nd_obj2).nd->value = (yyval.nd_obj2).value;
 	}
 	else {
 		if(!strcmp((yyvsp[-2].nd_obj2).type, "i32") && !strcmp((yyvsp[0].nd_obj2).type, "f32")) {
@@ -1727,59 +1823,78 @@ yyreduce:
 		}
 	}
 }
-#line 1731 "y.tab.c" /* yacc.c:1646  */
+#line 1827 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 240 "sem.y" /* yacc.c:1646  */
-    { strcpy((yyval.nd_obj2).name, (yyvsp[0].nd_obj2).name); sprintf((yyval.nd_obj2).type, (yyvsp[0].nd_obj2).type); (yyval.nd_obj2).nd = (yyvsp[0].nd_obj2).nd; }
-#line 1737 "y.tab.c" /* yacc.c:1646  */
+#line 336 "sem.y" /* yacc.c:1646  */
+    { strcpy((yyval.nd_obj2).name, (yyvsp[0].nd_obj2).name); sprintf((yyval.nd_obj2).type, (yyvsp[0].nd_obj2).type); (yyval.nd_obj2).nd = (yyvsp[0].nd_obj2).nd; 
+    (yyval.nd_obj2).value = (yyvsp[0].nd_obj2).value; (yyval.nd_obj2).nd->value = (yyval.nd_obj2).value; 
+}
+#line 1835 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 257 "sem.y" /* yacc.c:1646  */
-    { strcpy((yyval.nd_obj2).name, (yyvsp[0].nd_obj).name); sprintf((yyval.nd_obj2).type, "i32"); add('C'); (yyval.nd_obj2).nd = mknode(NULL, NULL, (yyvsp[0].nd_obj).name); }
-#line 1743 "y.tab.c" /* yacc.c:1646  */
+#line 355 "sem.y" /* yacc.c:1646  */
+    { strcpy((yyval.nd_obj2).name, (yyvsp[0].nd_obj).name); sprintf((yyval.nd_obj2).type, "i32"); add('C'); (yyval.nd_obj2).nd = mknode(NULL, NULL, (yyvsp[0].nd_obj).name); 
+    (yyval.nd_obj2).value = atoi((yyvsp[0].nd_obj).name); 
+    (yyval.nd_obj2).nd->value = (yyval.nd_obj2).value;
+    (yyval.nd_obj2).nd->lexeme = (yyval.nd_obj2).name;
+}
+#line 1845 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 258 "sem.y" /* yacc.c:1646  */
+#line 360 "sem.y" /* yacc.c:1646  */
     { strcpy((yyval.nd_obj2).name, (yyvsp[0].nd_obj).name); sprintf((yyval.nd_obj2).type, "f32"); add('C'); (yyval.nd_obj2).nd = mknode(NULL, NULL, (yyvsp[0].nd_obj).name); }
-#line 1749 "y.tab.c" /* yacc.c:1646  */
+#line 1851 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 259 "sem.y" /* yacc.c:1646  */
+#line 361 "sem.y" /* yacc.c:1646  */
     { strcpy((yyval.nd_obj2).name, (yyvsp[0].nd_obj).name); sprintf((yyval.nd_obj2).type, "char"); add('C'); (yyval.nd_obj2).nd = mknode(NULL, NULL, (yyvsp[0].nd_obj).name); }
-#line 1755 "y.tab.c" /* yacc.c:1646  */
+#line 1857 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 260 "sem.y" /* yacc.c:1646  */
-    { strcpy((yyval.nd_obj2).name, (yyvsp[0].nd_obj).name); char *id_type = get_type((yyvsp[0].nd_obj).name); sprintf((yyval.nd_obj2).type, id_type); check_declaration((yyvsp[0].nd_obj).name); (yyval.nd_obj2).nd = mknode(NULL, NULL, (yyvsp[0].nd_obj).name); }
-#line 1761 "y.tab.c" /* yacc.c:1646  */
+#line 362 "sem.y" /* yacc.c:1646  */
+    { 
+    strcpy((yyval.nd_obj2).name, (yyvsp[0].nd_obj).name); char *id_type = get_type((yyvsp[0].nd_obj).name); sprintf((yyval.nd_obj2).type, id_type); check_declaration((yyvsp[0].nd_obj).name); (yyval.nd_obj2).nd = mknode(NULL, NULL, (yyvsp[0].nd_obj).name); 
+    
+    for(int i=0; i<count; i++) {
+        if(!strcmp(symbol_table[i].id_name, (yyvsp[0].nd_obj).name)) {
+            (yyval.nd_obj2).value = symbol_table[i].value;
+            (yyval.nd_obj2).nd->value = (yyval.nd_obj2).value;
+        }
+    }
+
+    (yyval.nd_obj2).nd->isId = 1;
+    (yyval.nd_obj2).nd->lexeme = (yyval.nd_obj2).name;
+    
+    }
+#line 1876 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 263 "sem.y" /* yacc.c:1646  */
+#line 378 "sem.y" /* yacc.c:1646  */
     { add('K'); }
-#line 1767 "y.tab.c" /* yacc.c:1646  */
+#line 1882 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 263 "sem.y" /* yacc.c:1646  */
+#line 378 "sem.y" /* yacc.c:1646  */
     { check_return_type((yyvsp[-1].nd_obj2).name); (yyvsp[-3].nd_obj).nd = mknode(NULL, NULL, "return"); (yyval.nd_obj).nd = mknode((yyvsp[-3].nd_obj).nd, (yyvsp[-1].nd_obj2).nd, "RETURN"); }
-#line 1773 "y.tab.c" /* yacc.c:1646  */
+#line 1888 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 264 "sem.y" /* yacc.c:1646  */
+#line 379 "sem.y" /* yacc.c:1646  */
     { (yyval.nd_obj).nd = NULL; }
-#line 1779 "y.tab.c" /* yacc.c:1646  */
+#line 1894 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1783 "y.tab.c" /* yacc.c:1646  */
+#line 1898 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2007,13 +2122,11 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 267 "sem.y" /* yacc.c:1906  */
+#line 382 "sem.y" /* yacc.c:1906  */
 
 
 int main() {
     yyparse();
-    printf("\n\n");
-	printf("\t\t\t\t\t\t\t\t PHASE 1: LEXICAL ANALYSIS \n\n");
 	printf("\nSYMBOL   DATATYPE   TYPE   LINE NUMBER \n");
 	printf("_______________________________________\n\n");
 	int i=0;
@@ -2025,18 +2138,19 @@ int main() {
 		free(symbol_table[i].type);
 	}
 	printf("\n\n");
-	printf("\t\t\t\t\t\t\t\t PHASE 2: SYNTAX ANALYSIS \n\n");
-	print_tree(head); 
-	printf("\n\n\n\n");
-    printBT(head);
-	printf("\t\t\t\t\t\t\t\t PHASE 3: SEMANTIC ANALYSIS \n\n");
 	if(sem_errors>0) {
 		printf("Semantic analysis completed with %d errors\n", sem_errors);
 		for(int i=0; i<sem_errors; i++){
 			printf("\t - %s", errors[i]);
 		}
 	} else {
-		printf("Semantic analysis completed with no errors");
+		printf("Semantic analysis completed with no errors\n");
+        printf("Annotated Parse Tree: \n\n");
+        printBT(head);
+        printf("\n\n\n\n");
+        printf("Syntax Tree: \n\n");
+        printST(head);
+
 	}
 	printf("\n\n");
 }
@@ -2164,6 +2278,8 @@ struct node* mknode(struct node *left, struct node *right, char *token) {
 	newnode->left = left;
 	newnode->right = right;
 	newnode->token = newstr;
+    newnode->value = -1;
+    newnode->lexeme = "";
 	return(newnode);
 }
 
@@ -2188,13 +2304,26 @@ void printBT(struct node* ptr) {
     printBTHelper("", ptr, 0);    
 }
 
+void printST(struct node* ptr) {
+	printf("\n");
+    printSTHelper("", ptr, 0);    
+}
+
 void printBTHelper(char* prefix, struct node* ptr, int isLeft) {
     if( ptr != NULL ) {
         printf("%s",prefix);
         if(isLeft) { printf("├──"); } 
 		else { printf("└──"); }
-        printf("%s",ptr->token);
-		printf("\n");
+
+        if (ptr->isId == 1)
+            printf("id");
+        else
+            printf("%s",ptr->token);
+        
+        if (ptr->value != -1)
+            printf(" (%d)\n", ptr->value);
+        else
+            printf("\n");
 		char* addon = isLeft ? "│   " : "    ";
     	int len2 = strlen(addon);
     	int len1 = strlen(prefix);
@@ -2203,6 +2332,40 @@ void printBTHelper(char* prefix, struct node* ptr, int isLeft) {
     	strcpy(result + len1, addon);
 		printBTHelper(result, ptr->left, 1);
 		printBTHelper(result, ptr->right, 0);
+    	free(result);
+    }
+}
+
+void printSTHelper(char* prefix, struct node* ptr, int isLeft) {
+    if( ptr != NULL ) {
+        printf("%s",prefix);
+        if(isLeft) { printf("├──"); } 
+		else { printf("└──"); }
+        char* gg = ptr->token;
+        if (!strcmp(gg, "program"))
+            printf("fn\n");
+        else if (!strcmp(gg, "main"))
+            printf("main\n");
+        else if (!strcmp(gg, "statements"))
+            printf("\n");
+        else if (!strcmp(gg, "declaration"))
+            printf("=\n");
+        else if (!strcmp(gg, "println!"))
+            printf("println! Hi!\n");
+        else if (!strcmp(gg, "if-else"))
+            printf("if\n");
+        else
+            printf("%s\n", ptr->token);
+        
+        
+		char* addon = isLeft ? "│   " : "    ";
+    	int len2 = strlen(addon);
+    	int len1 = strlen(prefix);
+    	char* result = (char*)malloc(len1 + len2 + 1);
+    	strcpy(result, prefix);
+    	strcpy(result + len1, addon);
+		printSTHelper(result, ptr->left, 1);
+		printSTHelper(result, ptr->right, 0);
     	free(result);
     }
 }

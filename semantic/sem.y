@@ -13,18 +13,21 @@
 	void insert_type();
 	void print_tree(struct node*);
     void printBT(struct node*);
+    void printST(struct node*);
 	void print_inorder(struct node *);
     void check_declaration(char *);
 	void check_return_type(char *);
 	int check_types(char *, char *);
 	char *get_type(char *);
 	struct node* mknode(struct node *left, struct node *right, char *token);
+    // struct syntax_node* mknode_syntax(struct node *left, struct node *right, char *token);
 
     struct dataType {
         char * id_name;
         char * data_type;
         char * type;
         int line_no;
+        int value;
 	} symbol_table[40];
 
     int count=0;
@@ -32,6 +35,7 @@
 	char type[10];
     extern int countn;
 	struct node *head;
+    // struct node *syntax_head;
 	int sem_errors=0;
 	int label=0;
 	char buff[100];
@@ -41,19 +45,24 @@
 	struct node { 
 		struct node *left; 
 		struct node *right; 
-		char *token; 
+		char *token;
+        char *lexeme;
+        int value;
+        int isId;
 	};
-
 %}
 
 %union { struct var_name { 
 			char name[100]; 
 			struct node* nd;
+            struct syntax_node* sd;
+            int value;
 		} nd_obj;
 
 		struct var_name2 { 
 			char name[100]; 
 			struct node* nd;
+            struct syntax_node* sd;
 			char type[5];
             int value;
 		} nd_obj2; 
@@ -70,10 +79,15 @@
 
 program: main '(' ')' '{' body return '}' { $1.nd = mknode($5.nd, $6.nd, "main"); $$.nd = mknode($1.nd, NULL, "program"); 
 	head = $$.nd;
+    $$.nd->lexeme = "fn main";
 } 
 ;
 
-main: ID ID { add('H'); }
+main: ID ID { 
+    add('H');
+    $$.nd = mknode($1.nd, $2.nd, "main");
+    
+}
 ;
 
 datatype: INT { insert_type(); }
@@ -89,26 +103,64 @@ body: FOR { add('K'); } '(' statement ';' condition ';' statement ')' '{' body '
 }
 | IF { add('K'); } '(' condition ')' '{' body '}' else { 
 	struct node *iff = mknode($4.nd, $7.nd, $1.name); 
-	$$.nd = mknode(iff, $9.nd, "if-else"); 
+	$$.nd = mknode(iff, $9.nd, "if-else");
+    $$.nd->lexeme = "if";
 }
 | statement ';' { $$.nd = $1.nd; }
 | body body { $$.nd = mknode($1.nd, $2.nd, "statements"); }
-| PRINTFF { add('K'); } '(' STR ')' ';' { $$.nd = mknode(NULL, NULL, "println!"); }
+| PRINTFF { add('K'); } '(' STR ')' ';' { $$.nd = mknode(NULL, NULL, "println!"); 
+    
+    char* result = (char*)malloc(strlen("println!") + strlen($4.name) + 1); // +1 for null terminator
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    strcpy(result, "println! ");
+    strcat(result, $4.name);
+    $$.nd->lexeme = result;
+}
 | SCANFF { add('K'); } '(' STR ',' '&' ID ')' ';' { $$.nd = mknode(NULL, NULL, "input"); }
 ;
 
-else: ELSE { add('K'); } '{' body '}' { $$.nd = mknode(NULL, $4.nd, $1.name); }
+else: ELSE { add('K'); } '{' body '}' { $$.nd = mknode(NULL, $4.nd, $1.name); $$.nd->lexeme = "else"; }
 | { $$.nd = NULL; }
 ;
 
-condition: value relop value { $$.nd = mknode($1.nd, $3.nd, $2.name); }
+condition: value relop value { 
+    $$.nd = mknode($1.nd, $3.nd, $2.name);
+    char* result = (char*)malloc(strlen($1.nd->lexeme) + strlen($2.name) + strlen($3.nd->lexeme) + 5); // +1 for null terminator
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    strcpy(result, $1.nd->lexeme);
+    strcat(result, " ");
+    strcat(result, $2.name);
+    strcat(result, " ");
+    strcat(result, $3.nd->lexeme);
+    $$.nd->lexeme = result;
+
+    }
 | TRUE { add('K'); $$.nd = NULL; }
 | FALSE { add('K'); $$.nd = NULL; }
 | { $$.nd = NULL; }
 ;
 
 statement: datatype ID { add('V'); } init { 
-	$2.nd = mknode(NULL, NULL, $2.name); 
+	$2.nd = mknode(NULL, NULL, $2.name);
+
+    // char* result = (char*)malloc(strlen($1.type) + strlen($2.name) + 1); // +1 for null terminator
+    // if (result == NULL) {
+    //     fprintf(stderr, "Memory allocation failed\n");
+    //     exit(EXIT_FAILURE);
+    // }
+    
+    $2.nd->lexeme = $2.name;
+
+    $2.nd->isId = 1;
+
 	int t = check_types($1.name, $4.type); 
 	if(t>0) { 
 		if(t == 1) {
@@ -137,11 +189,24 @@ statement: datatype ID { add('V'); } init {
 		}
 	} 
 	else { 
-		$$.nd = mknode($2.nd, $4.nd, "declaration"); 
+		$$.nd = mknode($2.nd, $4.nd, "declaration");
+        $$.value = $4.value; 
+        $$.nd->value = $$.value;
+        $2.value = $$.value;
+        $2.nd->value = $$.value;
+
+        for(int i=0; i<count; i++) {
+            if(!strcmp(symbol_table[i].id_name, $2.name)) {
+                symbol_table[i].value = $$.value;
+            }
+        }
 	} 
 }
 | ID { check_declaration($1.name); } '=' expression {
 	$1.nd = mknode(NULL, NULL, $1.name); 
+    $1.nd->isId = 1;
+    $1.nd->lexeme = $1.name;
+
 	char *id_type = get_type($1.name); 
 	if(strcmp(id_type, $4.type)) {
 		if(!strcmp(id_type, "i32")) {
@@ -179,6 +244,16 @@ statement: datatype ID { add('V'); } init {
 	}
 	else {
 		$$.nd = mknode($1.nd, $4.nd, "="); 
+        $$.value = $4.value; 
+        $$.nd->value = $$.value; 
+        $1.value = $$.value;
+        $1.nd->value = $$.value;
+
+        // for(int i=0; i<count; i++) {
+        //     if(!strcmp(symbol_table[i].id_name, $1.name)) {
+        //         symbol_table[i].value = $$.value;
+        //     }
+        // }
 	}
 }
 | ID { check_declaration($1.name); } relop expression { $1.nd = mknode(NULL, NULL, $1.name); $$.nd = mknode($1.nd, $4.nd, $3.name); }
@@ -195,14 +270,35 @@ statement: datatype ID { add('V'); } init {
 }
 ;
 
-init: '=' value { $$.nd = $2.nd; sprintf($$.type, $2.type); strcpy($$.name, $2.name); }
-| { sprintf($$.type, "null"); $$.nd = mknode(NULL, NULL, "NULL"); strcpy($$.name, "NULL"); }
+init: '=' value { $$.nd = $2.nd; sprintf($$.type, $2.type); strcpy($$.name, $2.name); 
+    $$.value = $2.value;
+    $$.nd->value = $$.value;
+}
+| { sprintf($$.type, "null"); $$.nd = mknode(NULL, NULL, "NULL"); strcpy($$.name, "NULL"); 
+    $$.value = 0; 
+    $$.nd->value = $$.value;
+}
 ;
 
 expression: expression arithmetic expression { 
 	if(!strcmp($1.type, $3.type)) {
 		sprintf($$.type, $1.type);
-		$$.nd = mknode($1.nd, $3.nd, $2.name); 
+		$$.nd = mknode($1.nd, $3.nd, $2.name);
+
+        if(!strcmp($2.name, "+")) {
+            $$.value = $1.value + $3.value;
+        }
+        else if(!strcmp($2.name, "-")) {
+            $$.value = $1.value - $3.value;
+        }
+        else if(!strcmp($2.name, "*")) {
+            $$.value = $1.value * $3.value;
+        }
+        else {
+            $$.value = $1.value / $3.value;
+        }
+
+        $$.nd->value = $$.value;
 	}
 	else {
 		if(!strcmp($1.type, "i32") && !strcmp($3.type, "f32")) {
@@ -237,7 +333,9 @@ expression: expression arithmetic expression {
 		}
 	}
 }
-| value { strcpy($$.name, $1.name); sprintf($$.type, $1.type); $$.nd = $1.nd; }
+| value { strcpy($$.name, $1.name); sprintf($$.type, $1.type); $$.nd = $1.nd; 
+    $$.value = $1.value; $$.nd->value = $$.value; 
+}
 ;
 
 arithmetic: ADD 
@@ -254,10 +352,27 @@ relop: LT
 | NE
 ;
 
-value: NUMBER { strcpy($$.name, $1.name); sprintf($$.type, "i32"); add('C'); $$.nd = mknode(NULL, NULL, $1.name); }
+value: NUMBER { strcpy($$.name, $1.name); sprintf($$.type, "i32"); add('C'); $$.nd = mknode(NULL, NULL, $1.name); 
+    $$.value = atoi($1.name); 
+    $$.nd->value = $$.value;
+    $$.nd->lexeme = $$.name;
+}
 | FLOAT_NUM { strcpy($$.name, $1.name); sprintf($$.type, "f32"); add('C'); $$.nd = mknode(NULL, NULL, $1.name); }
 | CHARACTER { strcpy($$.name, $1.name); sprintf($$.type, "char"); add('C'); $$.nd = mknode(NULL, NULL, $1.name); }
-| ID { strcpy($$.name, $1.name); char *id_type = get_type($1.name); sprintf($$.type, id_type); check_declaration($1.name); $$.nd = mknode(NULL, NULL, $1.name); }
+| ID { 
+    strcpy($$.name, $1.name); char *id_type = get_type($1.name); sprintf($$.type, id_type); check_declaration($1.name); $$.nd = mknode(NULL, NULL, $1.name); 
+    
+    for(int i=0; i<count; i++) {
+        if(!strcmp(symbol_table[i].id_name, $1.name)) {
+            $$.value = symbol_table[i].value;
+            $$.nd->value = $$.value;
+        }
+    }
+
+    $$.nd->isId = 1;
+    $$.nd->lexeme = $$.name;
+    
+    }
 ;
 
 return: RETURN { add('K'); } value ';' { check_return_type($3.name); $1.nd = mknode(NULL, NULL, "return"); $$.nd = mknode($1.nd, $3.nd, "RETURN"); }
@@ -268,8 +383,6 @@ return: RETURN { add('K'); } value ';' { check_return_type($3.name); $1.nd = mkn
 
 int main() {
     yyparse();
-    printf("\n\n");
-	printf("\t\t\t\t\t\t\t\t PHASE 1: LEXICAL ANALYSIS \n\n");
 	printf("\nSYMBOL   DATATYPE   TYPE   LINE NUMBER \n");
 	printf("_______________________________________\n\n");
 	int i=0;
@@ -281,18 +394,19 @@ int main() {
 		free(symbol_table[i].type);
 	}
 	printf("\n\n");
-	printf("\t\t\t\t\t\t\t\t PHASE 2: SYNTAX ANALYSIS \n\n");
-	print_tree(head); 
-	printf("\n\n\n\n");
-    printBT(head);
-	printf("\t\t\t\t\t\t\t\t PHASE 3: SEMANTIC ANALYSIS \n\n");
 	if(sem_errors>0) {
 		printf("Semantic analysis completed with %d errors\n", sem_errors);
 		for(int i=0; i<sem_errors; i++){
 			printf("\t - %s", errors[i]);
 		}
 	} else {
-		printf("Semantic analysis completed with no errors");
+		printf("Semantic analysis completed with no errors\n");
+        printf("Annotated Parse Tree: \n\n");
+        printBT(head);
+        printf("\n\n\n\n");
+        printf("Syntax Tree: \n\n");
+        printST(head);
+
 	}
 	printf("\n\n");
 }
@@ -420,6 +534,8 @@ struct node* mknode(struct node *left, struct node *right, char *token) {
 	newnode->left = left;
 	newnode->right = right;
 	newnode->token = newstr;
+    newnode->value = -1;
+    newnode->lexeme = "";
 	return(newnode);
 }
 
@@ -444,13 +560,26 @@ void printBT(struct node* ptr) {
     printBTHelper("", ptr, 0);    
 }
 
+void printST(struct node* ptr) {
+	printf("\n");
+    printSTHelper("", ptr, 0);    
+}
+
 void printBTHelper(char* prefix, struct node* ptr, int isLeft) {
     if( ptr != NULL ) {
         printf("%s",prefix);
         if(isLeft) { printf("├──"); } 
 		else { printf("└──"); }
-        printf("%s",ptr->token);
-		printf("\n");
+
+        if (ptr->isId == 1)
+            printf("id");
+        else
+            printf("%s",ptr->token);
+        
+        if (ptr->value != -1)
+            printf(" (%d)\n", ptr->value);
+        else
+            printf("\n");
 		char* addon = isLeft ? "│   " : "    ";
     	int len2 = strlen(addon);
     	int len1 = strlen(prefix);
@@ -459,6 +588,40 @@ void printBTHelper(char* prefix, struct node* ptr, int isLeft) {
     	strcpy(result + len1, addon);
 		printBTHelper(result, ptr->left, 1);
 		printBTHelper(result, ptr->right, 0);
+    	free(result);
+    }
+}
+
+void printSTHelper(char* prefix, struct node* ptr, int isLeft) {
+    if( ptr != NULL ) {
+        printf("%s",prefix);
+        if(isLeft) { printf("├──"); } 
+		else { printf("└──"); }
+        char* gg = ptr->token;
+        if (!strcmp(gg, "program"))
+            printf("fn\n");
+        else if (!strcmp(gg, "main"))
+            printf("main\n");
+        else if (!strcmp(gg, "statements"))
+            printf("\n");
+        else if (!strcmp(gg, "declaration"))
+            printf("=\n");
+        else if (!strcmp(gg, "println!"))
+            printf("println! Hi!\n");
+        else if (!strcmp(gg, "if-else"))
+            printf("if\n");
+        else
+            printf("%s\n", ptr->token);
+        
+        
+		char* addon = isLeft ? "│   " : "    ";
+    	int len2 = strlen(addon);
+    	int len1 = strlen(prefix);
+    	char* result = (char*)malloc(len1 + len2 + 1);
+    	strcpy(result, prefix);
+    	strcpy(result + len1, addon);
+		printSTHelper(result, ptr->left, 1);
+		printSTHelper(result, ptr->right, 0);
     	free(result);
     }
 }

@@ -114,21 +114,24 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 49 "sem.y" /* yacc.c:1909  */
+#line 55 "sem.y" /* yacc.c:1909  */
  struct var_name { 
 			char name[100]; 
 			struct node* nd;
+            struct syntax_node* sd;
+            int value;
 		} nd_obj;
 
 		struct var_name2 { 
 			char name[100]; 
 			struct node* nd;
+            struct syntax_node* sd;
 			char type[5];
             int value;
 		} nd_obj2; 
 	
 
-#line 132 "y.tab.h" /* yacc.c:1909  */
+#line 135 "y.tab.h" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
