@@ -551,3 +551,5 @@ void yyerror(char *s) {
 int printline() {
 	return yylineno;
 }
+
+int yywrap(){return(1);}

@@ -1,5 +1,3 @@
-use std::io;
-
 fn main() {
   int a = 10;
   int sum = 0;

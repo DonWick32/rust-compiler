@@ -1,0 +1,92 @@
+Syntax Tree:
+
+└──fn
+    ├──main
+    │   ├──declare
+    │   │   ├──arr[10]
+    │   │   ├──n
+    │   │   │   ├──=
+    │   │   │   │   └──10
+    │   │   ├──call quicksort
+    │   │   │   ├──arguments
+    │   │   │   │   ├──arr
+    │   │   │   │   ├──0
+    │   │   │   │   └──-
+    │   │   │   │       ├──n
+    │   │   │   │       └──1
+    │   │   └──return
+    ├──quicksort
+    │   ├──parameters
+    │   │   ├──arr
+    │   │   ├──low
+    │   │   └──high
+    │   └──body
+    │       ├──if
+    │       │   ├──<
+    │       │   │   ├──low
+    │       │   │   └──high
+    │       │   └──body
+    │       │       ├──declare pivot
+    │       │       │   └──=
+    │       │       │       └──0
+    │       │       ├──call partition
+    │       │       │   ├──arguments
+    │       │       │   │   ├──arr
+    │       │       │   │   ├──low
+    │       │       │   │   └──high
+    │       │       ├──call quicksort
+    │       │       │   ├──arguments
+    │       │       │   │   ├──arr
+    │       │       │   │   ├──low
+    │       │       │   │   └──-
+    │       │       │   │       ├──pivot
+    │       │       │   │       └──1
+    │       │       └──call quicksort
+    │       │           ├──arguments
+    │       │           │   ├──arr
+    │       │           │   ├──+
+    │       │           │   │   ├──pivot
+    │       │           │   │   └──1
+    │       │           │   └──high
+    ├──partition
+    │   ├──parameters
+    │   │   ├──arr
+    │   │   ├──low
+    │   │   └──high
+    │   └──body
+    │       ├──declare pivot
+    │       │   └──=
+    │       │       └──arr[low]
+    │       ├──declare i
+    │       │   └──=
+    │       │       └──low
+    │       ├──for
+    │       │   ├──range
+    │       │   │   ├──j
+    │       │   │   │   └──low + 1
+    │       │   │   │   └──high
+    │       │   └──if
+    │       │       ├──<
+    │       │       │   ├──arr[j]
+    │       │       │   └──pivot
+    │       │       ├──assign
+    │       │       │   ├──+
+    │       │       │   │   ├──i
+    │       │       │   │   └──1
+    │       │       │   ├──declare
+    │       │       │   │   ├──t1
+    │       │       │   │   └──arr[i]
+    │       │       │   ├──declare
+    │       │       │   │   ├──t2
+    │       │       │   │   └──arr[j]
+    │       │       │   ├──assign
+    │       │       │   │   ├──arr[i]
+    │       │       │   │   └──t2
+    │       │       │   ├──assign
+    │       │       │   │   ├──arr[j]
+    │       │       │   │   └──t1
+    │       │       └──assign
+    │       │           ├──t1
+    │       │           └──arr[low]
+    │       └──return
+

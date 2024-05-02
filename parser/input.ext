@@ -1,0 +1,428 @@
+%{
+    #include<stdio.h>
+    #include<string.h>
+    #include<stdlib.h>
+    #include<ctype.h>
+    #include"lex.yy.c"
+    void yyerror(const char *s);
+    int yylex();
+    int yywrap();
+    void add(char);
+    void insert_type();
+    int search(char *);
+    void insert_type();
+    void print_tree(struct node*);
+    void printBT(struct node*);
+    void printST(struct node*);
+    void print_inorder(struct node *);
+    void check_declaration(char *);
+    void check_return_type(char *);
+    int check_types(char *, char *);
+    char *get_type(char *);
+    struct node* mknode(struct node *left, struct node *right, char *token);
+
+    struct dataType {
+        char * id_name;
+        char * data_type;
+        char * type;
+        int line_no;
+        int value;
+    } symbol_table[40];
+
+    int count=0;
+    int q;
+    char type[10];
+    extern int countn;
+    struct node *head;
+
+    int sem_errors=0;
+    char errors[10][100];
+    char reserved[11][10] = {"i32", "f32", "char", "void", "if", "else", "for", "main", "fn", "return", "include"};
+
+    struct node { 
+        struct node *left; 
+        struct node *right; 
+        char *token;
+        char *lexeme;
+        int value;
+        int isId;
+    };
+%}
+
+%union { 
+    struct var_name { 
+        char name[100]; 
+        struct node* nd;
+        struct syntax_node* sd;
+        int value;
+    } nd_obj;
+
+    struct var_name2 { 
+        char name[100]; 
+        struct node* nd;
+        struct syntax_node* sd;
+        char type[5];
+        int value;
+    } nd_obj2; 
+} 
+
+%token VOID 
+%token <nd_obj> CHARACTER PRINTFF SCANFF INT FLOAT CHAR FOR IF ELSE TRUE FALSE NUMBER FLOAT_NUM ID LE GE EQ NE GT LT AND OR STR ADD MULTIPLY DIVIDE SUBTRACT UNARY RETURN FUNCTION MAIN
+%type <nd_obj> main body return datatype statement arithmetic relop program else condition function_definition main_function
+%type <nd_obj2> parameters init value expression
+
+%%
+
+program: function_definition program
+       | main_function
+       ;
+
+function_definition: FUNCTION ID '(' parameters ')' '{' body return '}' { 
+                        $1.nd = mknode($6.nd, $7.nd, $2.name);
+                        $$.nd = mknode($1.nd, NULL, "function_definition");
+                    }
+                    ;
+
+main_function: FUNCTION MAIN '(' ')' '{' body return '}' { 
+                $1.nd = mknode($6.nd, $7.nd, "main");
+                $$.nd = mknode($1.nd, NULL, "main_function");
+              }
+              ;
+
+parameters: /* empty */
+          | ID
+          | parameters ',' ID
+          ;
+
+datatype: INT { insert_type(); }
+        | FLOAT { insert_type(); }
+        | CHAR { insert_type(); }
+        | VOID { insert_type(); }
+        ;
+
+body: FOR { add('K'); } '(' statement ';' condition ';' statement ')' '{' body '}' { 
+        struct node *temp = mknode($6.nd, $8.nd, "CONDITION"); 
+        struct node *temp2 = mknode($4.nd, temp, "CONDITION"); 
+        $$.nd = mknode(temp2, $11.nd, "FOR");
+      }
+    | IF { add('K'); } '(' condition ')' '{' body '}' else { 
+        struct node *iff = mknode($4.nd, $7.nd, "CONDITION"); 
+        $$.nd = mknode(iff, $9.nd, "IF_ELSE");
+      }
+    | statement ';' { $$.nd = $1.nd; }
+    | body body { $$.nd = mknode($1.nd, $2.nd, "statements"); }
+    | PRINTFF { add('K'); } '(' STR ')' ';' { 
+        $$.nd = mknode(NULL, NULL, "PRINTFF"); 
+        char* result = (char*)malloc(strlen("PRINTFF") + strlen($4.name) + 1); 
+        strcpy(result, "PRINTFF ");
+        strcat(result, $4.name);
+        $$.nd->lexeme = result;
+      }
+    | SCANFF { add('K'); } '(' STR ',' '&' ID ')' ';' { 
+        $$.nd = mknode(NULL, NULL, "SCANFF"); 
+      }
+    | ELSE { add('K'); } '{' body '}' { 
+        $$.nd = mknode(NULL, $4.nd, "ELSE"); 
+      }
+    | { $$.nd = NULL; }
+    ;
+
+condition: value relop value { 
+            $$.nd = mknode($1.nd, $3.nd, $2.name);
+          }
+        | TRUE { add('K'); $$.nd = NULL; }
+        | FALSE { add('K'); $$.nd = NULL; }
+        | { $$.nd = NULL; }
+        ;
+
+statement: datatype ID { add('V'); } init { 
+            $2.nd = mknode(NULL, NULL, $2.name);
+            $2.nd->lexeme = $2.name;
+            $2.nd->isId = 1;
+            int t = check_types($1.name, $4.type); 
+            if(t > 0) { 
+                char op[20];
+                switch(t) {
+                    case 1: strcpy(op, "floattoint"); break;
+                    case 2: strcpy(op, "inttofloat"); break;
+                    case 3: strcpy(op, "chartoint"); break;
+                    case 4: strcpy(op, "inttochar"); break;
+                    case 5: strcpy(op, "chartofloat"); break;
+                    case 6: strcpy(op, "floattochar"); break;
+                }
+                struct node *temp = mknode(NULL, $4.nd, op); 
+                $$.nd = mknode($2.nd, temp, "declaration"); 
+            } 
+            else { 
+                $$.nd = mknode($2.nd, $4.nd, "declaration");
+                $$.value = $4.value; 
+                $$.nd->value = $$.value;
+                $2.value = $$.value;
+                $2.nd->value = $$.value;
+                for(int i=0; i<count; i++) {
+                    if(!strcmp(symbol_table[i].id_name, $2.name)) {
+                        symbol_table[i].value = $$.value;
+                    }
+                }
+            } 
+          }
+        | ID { check_declaration($1.name); } '=' expression {
+            $1.nd = mknode(NULL, NULL, $1.name);
+            $1.nd->lexeme = $1.name;
+            int t = check_types($1.name, $3.type); 
+            if(t > 0) { 
+                char op[20];
+                switch(t) {
+                    case 1: strcpy(op, "floattoint"); break;
+                    case 2: strcpy(op, "inttofloat"); break;
+                    case 3: strcpy(op, "chartoint"); break;
+                    case 4: strcpy(op, "inttochar"); break;
+                    case 5: strcpy(op, "chartofloat"); break;
+                    case 6: strcpy(op, "floattochar"); break;
+                }
+                struct node *temp = mknode(NULL, $3.nd, op); 
+                $$.nd = mknode($1.nd, temp, "="); 
+            } 
+            else { 
+                $$.nd = mknode($1.nd, $3.nd, "=");
+                $$.value = $3.value; 
+                $1.value = $$.value;
+                $1.nd->value = $$.value;
+                for(int i=0; i<count; i++) {
+                    if(!strcmp(symbol_table[i].id_name, $1.name)) {
+                        symbol_table[i].value = $$.value;
+                    }
+                }
+            } 
+          }
+        | expression { $$.nd = $1.nd; $$.value = $1.value; }
+        ;
+
+init: '=' NUMBER { $$.nd = mknode(NULL, NULL, "="); $$.value = $2.nd->value; }
+    | { $$.nd = NULL; }
+    ;
+
+expression: expression '+' expression { 
+                if(strcmp($1.nd->token, $3.nd->token)) {
+                    $$.nd = mknode($1.nd, $3.nd, "floatadd");
+                }
+                else {
+                    $$.nd = mknode($1.nd, $3.nd, "+");
+                }
+                if($1.value && $3.value) { $$.value = $1.value + $3.value; } 
+                else { $$.value = 0; }
+            }
+        | expression '-' expression { 
+                if(strcmp($1.nd->token, $3.nd->token)) {
+                    $$.nd = mknode($1.nd, $3.nd, "floatsub");
+                }
+                else {
+                    $$.nd = mknode($1.nd, $3.nd, "-");
+                }
+                if($1.value && $3.value) { $$.value = $1.value - $3.value; } 
+                else { $$.value = 0; }
+            }
+        | expression '*' expression { 
+                if(strcmp($1.nd->token, $3.nd->token)) {
+                    $$.nd = mknode($1.nd, $3.nd, "floatmul");
+                }
+                else {
+                    $$.nd = mknode($1.nd, $3.nd, "*");
+                }
+                if($1.value && $3.value) { $$.value = $1.value * $3.value; } 
+                else { $$.value = 0; }
+            }
+        | expression '/' expression { 
+                if(strcmp($1.nd->token, $3.nd->token)) {
+                    $$.nd = mknode($1.nd, $3.nd, "floatdiv");
+                }
+                else {
+                    $$.nd = mknode($1.nd, $3.nd, "/");
+                }
+                if($1.value && $3.value) { $$.value = $1.value / $3.value; } 
+                else { $$.value = 0; }
+            }
+        | '(' expression ')' { $$.nd = $2.nd; $$.value = $2.value; }
+        | NUMBER { $$.nd = mknode(NULL, NULL, "NUMBER"); $$.nd->value = $1.value; $$.value = $1.value; }
+        | ID { $$.nd = mknode(NULL, NULL, "ID"); $$.nd->value = $1.value; $$.value = $1.value; }
+        ;
+
+relop: EQ { strcpy($$.name, "=="); }
+     | NE { strcpy($$.name, "!="); }
+     | LE { strcpy($$.name, "<="); }
+     | GE { strcpy($$.name, ">="); }
+     | GT { strcpy($$.name, ">"); }
+     | LT { strcpy($$.name, "<"); }
+     ;
+
+parameters: /* empty */
+          | datatype ID { 
+                strcpy(symbol_table[count].data_type, $1.name); 
+                strcpy(symbol_table[count].id_name, $2.name);
+                count++;
+              } parameters ',' datatype ID {
+                strcpy(symbol_table[count].data_type, $5.name); 
+                strcpy(symbol_table[count].id_name, $6.name);
+                count++;
+              }
+          ;
+
+return: RETURN expression { 
+            $$.nd = mknode(NULL, $2.nd, "RETURN");
+            check_return_type($2.nd->token); 
+            $$.value = $2.value;
+        }
+      | RETURN { 
+            $$.nd = mknode(NULL, NULL, "RETURN");
+            check_return_type("VOID"); 
+            $$.value = 0;
+        }
+      ;
+
+else: /* empty */
+    | ELSE body { $$.nd = $2.nd; }
+    ;
+
+%%
+
+int yywrap() { return 1; }
+
+void yyerror(const char *s) {
+    printf("%s\n", s);
+}
+
+struct node* mknode(struct node *left, struct node *right, char *token) {
+    struct node *p;
+    p = (struct node*)malloc(sizeof(struct node));
+    p->left = left;
+    p->right = right;
+    p->token = token;
+    return p;
+}
+
+void print_tree(struct node* node) {
+    if (node != NULL) {
+        printf("%s\n", node->token);
+        print_tree(node->left);
+        print_tree(node->right);
+    }
+}
+
+void print_inorder(struct node *tree) {
+    if(tree != NULL) {
+        print_inorder(tree->left);
+        printf("%s ", tree->token);
+        print_inorder(tree->right);
+    }
+}
+
+void printBT(struct node* root) {
+    if (root == NULL)
+        return;
+    printf(" %s ", root->token);
+    printBT(root->left);
+    printBT(root->right);
+}
+
+void printST(struct node* root) {
+    if (root == NULL)
+        return;
+    printf("%s ", root->id_name);
+    printf("%s ", root->data_type);
+    printf("%s\n", root->type);
+    printST(root->left);
+    printST(root->right);
+}
+
+void add(char a) {
+    type[q++] = a;
+}
+
+void insert_type() {
+    for(int i=0; i<q; i++) {
+        if(type[i] == 'K') { 
+            strcpy(symbol_table[count].type, "KEYWORD");
+            q=0;
+            break; 
+        }
+        else if(type[i] == 'V') { 
+            strcpy(symbol_table[count].type, "VAR");
+            q=0;
+            break; 
+        }
+    }
+}
+
+int search(char *a) {
+    for(int i=0; i<11; i++) {
+        if(!strcmp(a, keywords[i])) return 1;
+    }
+    return 0;
+}
+
+int check_types(char *a, char *b) {
+    if(!strcmp(a, "int") && !strcmp(b, "float")) return 1;
+    else if(!strcmp(a, "float") && !strcmp(b, "int")) return 2;
+    else if(!strcmp(a, "char") && !strcmp(b, "int")) return 3;
+    else if(!strcmp(a, "int") && !strcmp(b, "char")) return 4;
+    else if(!strcmp(a, "char") && !strcmp(b, "float")) return 5;
+    else if(!strcmp(a, "float") && !strcmp(b, "char")) return 6;
+    return 0;
+}
+
+int check_return_type(char *a) {
+    if(strcmp(func_table[curr].return_type, a)) {
+        printf("Error: Return type mismatch.\n");
+        exit(1);
+    }
+}
+
+void print_func_table() {
+    for(int i=0; i<20; i++) {
+        if(!strcmp(func_table[i].func_name, "")) break;
+        printf("%s %s\n", func_table[i].return_type, func_table[i].func_name);
+    }
+}
+
+void insert_func_table(char *a, char *b) {
+    strcpy(func_table[curr].func_name, a);
+    strcpy(func_table[curr].return_type, b);
+    curr++;
+}
+
+void add_func_table() {
+    for(int i=0; i<curr; i++) {
+        if(!strcmp(func_table[i].func_name, "")) {
+            strcpy(func_table[i].func_name, symbol_table[count].id_name);
+            strcpy(func_table[i].return_type, symbol_table[count].data_type);
+            break;
+        }
+    }
+}
+
+int main() {
+    FILE *f;
+    f = fopen("result.c", "w");
+    if(f == NULL) {
+        printf("File not found.\n");
+        exit(0);
+    }
+    yyin = fopen("test.txt", "r");
+    if(yyin == NULL) {
+        printf("File not found.\n");
+        exit(0);
+    }
+    printf("Enter the function name: ");
+    scanf("%s", func_name);
+    fprintf(f, "#include<stdio.h>\n#include<stdlib.h>\n\n");
+    fprintf(f, "struct node { struct node *left; struct node *right; char *token; char *type; char *lexeme; int value; };\n\n");
+    fprintf(f, "struct symbol_table { char id_name[100]; char data_type[100]; char type[100]; int value; struct symbol_table *left; struct symbol_table *right; } symbol_table[20];\n\n");
+    fprintf(f, "struct func_table { char return_type[100]; char func_name[100]; } func_table[20];\n\n");
+    fprintf(f, "void print_tree(struct node*);\nvoid print_inorder(struct node *);\nvoid printST(struct node*);\nvoid print_func_table();\nint search(char *);\nint check_types(char *, char *);\nint check_return_type(char *);\nvoid add(char);\nvoid insert_type();\nvoid insert_func_table(char *, char *);\n\n");
+    fprintf(f, "int count = 0;\nint curr = 0;\nchar func_name[100];\n\n");
+    fprintf(f, "int main() {\n    yyparse();\n    printf(\"Symbol Table:-\\n\");\n    printST(symbol_table);\n    printf(\"Function Table:-\\n\");\n    print_func_table();\n    printf(\"Abstract Syntax Tree:-\\n\");\n    print_tree($$.nd);\n    printf(\"Inorder Traversal:-\\n\");\n    print_inorder($$.nd);\n    return 0;\n}\n\n");
+    yyparse();
+    fclose(f);
+    fclose(yyin);
+    return 0;
+}

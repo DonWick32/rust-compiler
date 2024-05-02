@@ -1,0 +1,35 @@
+IF n GOTO 10
+L4 :
+IF t1 GOTO L1
+pivot = 0
+GOTO L2
+L2 :
+IF = ARR [t2]
+pivot = t3
+i = low
+j = t4
+L3 :
+IF = GOTO j
+IF t6 GOTO L4
+IF = ARR [t7]
+IF t9 GOTO L5
+t: = i + 1
+i = t:
+t; = i
+IF = ARR [t;]
+t= = j
+IF = ARR [t=]
+t< = t2
+t= = t1
+j = j + 1
+GOTO L3
+L5 :
+t? = i
+IF = ARR [t?]
+tA = low
+IF = ARR [tA]
+t@ = t2
+tA = t1
+tC = i + 1
+i = tC
+L1 :

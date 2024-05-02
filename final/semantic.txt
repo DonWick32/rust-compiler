@@ -1,0 +1,113 @@
+-----------------------------------------Symbol Table---------------------------------------------
+--------------------------------------------------------------------------------------------------
+Token           |       Token Type            |       Data Type
+--------------------------------------------------------------------------------------------------
+arr                        Array                           INT
+n                           Variable                      INT
+quicksort              Function                      (INT, INT, INT)
+partition                Function                      (INT, INT, INT)
+--------------------------------------------------------------------------------------------------
+
+Parse Tree:
+
+└── PROGRAM
+    ├── FUNCTION: main
+    │   ├── DECLARE
+    │   │   ├── arr[10]
+    │   │   └── n
+    │   │       ├── =
+    │   │       │   └── 10
+    │   ├── CALL: quicksort
+    │   │   ├── ARGUMENTS
+    │   │   │   ├── arr
+    │   │   │   ├── 0
+    │   │   │   └── -
+    │   │   │       ├── n
+    │   │   │       └── 1
+    │   └── RETURN
+    ├── FUNCTION: quicksort
+    │   ├── PARAMETERS
+    │   │   ├── arr
+    │   │   ├── low
+    │   │   └── high
+    │   └── BODY
+    │       ├── IF
+    │       │   ├── CONDITION
+    │       │   │   ├── low
+    │       │   │   ├── <
+    │       │   │   └── high
+    │       │   └── THEN
+    │       │       ├── DECLARE pivot
+    │       │       │   ├── =
+    │       │       │   │   └── 0
+    │       │       ├── CALL: partition
+    │       │       │   ├── ARGUMENTS
+    │       │       │   │   ├── arr
+    │       │       │   │   ├── low
+    │       │       │   │   └── high
+    │       │       ├── CALL: quicksort
+    │       │       │   ├── ARGUMENTS
+    │       │       │   │   ├── arr
+    │       │       │   │   ├── low
+    │       │       │   │   └── -
+    │       │       │   │       ├── pivot
+    │       │       │   │       └── 1
+    │       │       └── CALL: quicksort
+    │       │           ├── ARGUMENTS
+    │       │           │   ├── arr
+    │       │           │   ├── +
+    │       │           │   │   ├── pivot
+    │       │           │   │   └── 1
+    │       │           │   └── high
+    │       └── RETURN
+    ├── FUNCTION: partition
+    │   ├── PARAMETERS
+    │   │   ├── arr
+    │   │   ├── low
+    │   │   └── high
+    │   └── BODY
+    │       ├── DECLARE pivot
+    │       │   ├── =
+    │       │   │   └── arr[low]
+    │       ├── DECLARE i
+    │       │   ├── =
+    │       │   │   └── low
+    │       ├── FOR
+    │       │   ├── RANGE
+    │       │   │   ├── j
+    │       │   │   │   └── low + 1
+    │       │   │   │   └── high
+    │       │   ├── IF
+    │       │   │   ├── CONDITION
+    │       │   │   │   ├── arr[j]
+    │       │   │   │   ├── <
+    │       │   │   │   └── pivot
+    │       │   │   ├── THEN
+    │       │   │   │   ├── i
+    │       │   │   │   │   ├── =
+    │       │   │   │   │   │   └── i + 1
+    │       │   │   │   ├── DECLARE t1
+    │       │   │   │   │   └── arr[i]
+    │       │   │   │   ├── DECLARE t2
+    │       │   │   │   │   └── arr[j]
+    │       │   │   │   ├── ASSIGN
+    │       │   │   │   │   ├── arr[i]
+    │       │   │   │   │   └── t2
+    │       │   │   │   └── ASSIGN
+    │       │   │   │   │   ├── arr[j]
+    │       │   │   │   │   └── t1
+    │       ├── DECLARE t1
+    │       │   ├── arr[i]
+    │       ├── DECLARE t2
+    │       │   ├── arr[low]
+    │       ├── ASSIGN
+    │       │   ├── arr[i]
+    │       │   └── t2
+    │       ├── ASSIGN
+    │       │   ├── arr[low]
+    │       │   └── t1
+    │       └── RETURN
+
+
+
+

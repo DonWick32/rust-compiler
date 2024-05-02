@@ -1,0 +1,35 @@
+0 n = 10
+1 t0 = low < high
+2 t1 != t0
+3 if t1 goto L1
+4 pivot = 0
+5 goto 
+5 t2 = low
+6 t3 = arr[t2]
+7 pivot = t3
+8 i = low
+9 t4 = low + 1
+10 j = t4
+11 t5 = j < high
+12 t6 = !j
+13 if t6 goto L4
+14 t7 = j
+15 t8 = arr[t7]
+16 t9 = t8 < pivot
+17 if t9 goto L5
+18 t10 = i + 1
+19 i = t10
+20 t11 = arr[i]
+21 t12 = j
+22 t13 = arr[t12]
+23 j = j + 1
+24 goto L3
+25 t14 = i
+26 t15 = arr[t14]
+27 t16 = low
+28 t17 = arr[t16]
+29 t18 = t17
+30 t19 = t18
+31 t20 = i + 1
+32 i = t20
+33 L1:

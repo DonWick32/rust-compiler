@@ -68,27 +68,34 @@
 		} nd_obj2; 
 	} 
 %token VOID 
-%token <nd_obj> CHARACTER PRINTFF SCANFF INT FLOAT CHAR FOR IF ELSE TRUE FALSE NUMBER FLOAT_NUM ID LE GE EQ NE GT LT AND OR STR ADD MULTIPLY DIVIDE SUBTRACT UNARY RETURN 
-%type <nd_obj> main body return datatype statement arithmetic relop program else condition
+%token <nd_obj> CHARACTER PRINTFF SCANFF INT FLOAT CHAR FOR IF ELSE TRUE FALSE NUMBER FLOAT_NUM ID LE GE EQ NE GT LT AND OR STR ADD MULTIPLY DIVIDE SUBTRACT UNARY RETURN FUNCTION MAIN
+%type <nd_obj> main body return datatype statement arithmetic relop program else condition function_definition main_function
 %type <nd_obj2> init value expression
 
 %%
 
 
 
+program: function_definition program
+       | main_function
+       ;
 
-program: main '(' ')' '{' body return '}' { $1.nd = mknode($5.nd, $6.nd, "main"); $$.nd = mknode($1.nd, NULL, "program"); 
-	head = $$.nd;
-    $$.nd->lexeme = "fn main";
-} 
-;
+function_definition: FUNCTION ID '(' parameters ')' '{' body return '}' { 
+                        $1.nd = mknode($6.nd, $7.nd, $2.lexeme);
+                        $$.nd = mknode($1.nd, NULL, "function_definition");
+                    }
+                    ;
 
-main: ID ID { 
-    add('H');
-    $$.nd = mknode($1.nd, $2.nd, "main");
-    
-}
-;
+main_function: FUNCTION MAIN '(' ')' '{' body return '}' { 
+                $1.nd = mknode($6.nd, $7.nd, "main");
+                $$.nd = mknode($1.nd, NULL, "main_function");
+              }
+              ;
+
+parameters: /* empty */
+          | ID
+          | parameters ',' ID
+          ;
 
 datatype: INT { insert_type(); }
 | FLOAT { insert_type(); }

@@ -1,8 +1,9 @@
-/* A Bison parser, made by GNU Bison 3.0.2.  */
+/* A Bison parser, made by GNU Bison 3.8.2.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
+   Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,7 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -30,56 +31,69 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
+/* DO NOT RELY ON FEATURES THAT ARE NOT DOCUMENTED in the manual,
+   especially those whose name start with YY_ or yy_.  They are
+   private implementation details that can be changed or removed.  */
+
 #ifndef YY_YY_Y_TAB_H_INCLUDED
 # define YY_YY_Y_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 1
+# define YYDEBUG 0
 #endif
 #if YYDEBUG
 extern int yydebug;
 #endif
 
-/* Token type.  */
+/* Token kinds.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
   enum yytokentype
   {
-    DECLARE = 258,
-    CHARACTER = 259,
-    PRINTFF = 260,
-    SCANFF = 261,
-    INT = 262,
-    BOOL = 263,
-    FLOAT = 264,
-    CHAR = 265,
-    WHILE = 266,
-    IF = 267,
-    ELSE = 268,
-    TRUE = 269,
-    FALSE = 270,
-    NUMBER = 271,
-    FLOAT_NUM = 272,
-    ID = 273,
-    LE = 274,
-    GE = 275,
-    EQ = 276,
-    NE = 277,
-    GT = 278,
-    LT = 279,
-    AND = 280,
-    OR = 281,
-    STR = 282,
-    ADD = 283,
-    MULT = 284,
-    DIV = 285,
-    SUB = 286,
-    RETURN = 287,
-    LOG = 288,
-    POW = 289
+    YYEMPTY = -2,
+    YYEOF = 0,                     /* "end of file"  */
+    YYerror = 256,                 /* error  */
+    YYUNDEF = 257,                 /* "invalid token"  */
+    DECLARE = 258,                 /* DECLARE  */
+    CHARACTER = 259,               /* CHARACTER  */
+    PRINTFF = 260,                 /* PRINTFF  */
+    SCANFF = 261,                  /* SCANFF  */
+    INT = 262,                     /* INT  */
+    BOOL = 263,                    /* BOOL  */
+    FLOAT = 264,                   /* FLOAT  */
+    CHAR = 265,                    /* CHAR  */
+    WHILE = 266,                   /* WHILE  */
+    IF = 267,                      /* IF  */
+    ELSE = 268,                    /* ELSE  */
+    TRUE = 269,                    /* TRUE  */
+    FALSE = 270,                   /* FALSE  */
+    NUMBER = 271,                  /* NUMBER  */
+    FLOAT_NUM = 272,               /* FLOAT_NUM  */
+    ID = 273,                      /* ID  */
+    LE = 274,                      /* LE  */
+    GE = 275,                      /* GE  */
+    EQ = 276,                      /* EQ  */
+    NE = 277,                      /* NE  */
+    GT = 278,                      /* GT  */
+    LT = 279,                      /* LT  */
+    AND = 280,                     /* AND  */
+    OR = 281,                      /* OR  */
+    STR = 282,                     /* STR  */
+    ADD = 283,                     /* ADD  */
+    MULT = 284,                    /* MULT  */
+    DIV = 285,                     /* DIV  */
+    SUB = 286,                     /* SUB  */
+    RETURN = 287,                  /* RETURN  */
+    LOG = 288,                     /* LOG  */
+    POW = 289                      /* POW  */
   };
+  typedef enum yytokentype yytoken_kind_t;
 #endif
-/* Tokens.  */
+/* Token kinds.  */
+#define YYEMPTY -2
+#define YYEOF 0
+#define YYerror 256
+#define YYUNDEF 257
 #define DECLARE 258
 #define CHARACTER 259
 #define PRINTFF 260
@@ -115,18 +129,19 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 28 "parser.y" /* yacc.c:1909  */
+#line 28 "parser.y"
  
 	struct var_name { 
 		char name[100]; 
 		struct node* nd;
 	} nd_obj; 
 
-#line 129 "y.tab.h" /* yacc.c:1909  */
+#line 142 "y.tab.h"
+
 };
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
@@ -134,6 +149,8 @@ union YYSTYPE
 
 extern YYSTYPE yylval;
 
+
 int yyparse (void);
+
 
 #endif /* !YY_YY_Y_TAB_H_INCLUDED  */

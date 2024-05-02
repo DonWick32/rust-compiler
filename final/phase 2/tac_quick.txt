@@ -1,0 +1,70 @@
+1 n = 10
+
+L4 :
+t0 = low < high
+
+t1 = not t0
+if t1 goto L1
+pivot = 0
+
+goto L2
+L2 : 
+
+t2 = low
+t3 = arr [t2] 
+pivot = t3
+i = low
+
+t4 = low + 1
+
+j = t4
+
+L3 :
+
+t5 = j < high
+t6 = not j
+
+if t6 goto L4
+
+
+t7 = j
+t8 = arr [t7] 
+
+t9 = t8 < pivot
+if t9 goto L5
+
+t: = i + 1
+i = t:
+
+t; = i
+t< = arr [t;] 
+t1 = t<
+
+t= = j
+t> = arr [t=] 
+t2 = t>
+
+t< = t2
+t= = t1
+
+j = j + 1
+
+goto L3
+
+L5 :
+
+t? = i
+t@ = arr [t?] 
+t1 = t@
+
+tA = low
+tB = arr [tA] 
+t2 = tB
+
+t@ = t2
+tA = t1
+
+tC = i + 1
+i = tC
+
+L1 :

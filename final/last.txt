@@ -1,0 +1,395 @@
+Basic Blocks:
+Block 0:
+        n = 10
+        t0 = low < high
+        if t1 != t0 goto 6
+
+Block 1:
+        pivot = 0
+        t2 = low
+        t3 = arr[t2]
+        pivot = t3
+        i = low
+        t4 = low + 1
+        j = t4
+
+Block 2:
+        t5 = j < high
+        if t5 != j goto 2
+
+Block 3:
+        t7 = j
+        t8 = arr[t7]
+        t9 = t8 < pivot
+        if t9 goto 5
+
+Block 4:
+        t10 = i + 1
+        i = t10
+        t11 = i
+        t12 = arr[t11]
+        t1 = t12
+        t13 = j
+        t14 = arr[t13]
+        t2 = t14
+        t12 = t2
+        t14 = t1
+        j = j + 1
+        goto 2
+
+Block 5:
+        t15 = i
+        t16 = arr[t15]
+        t1 = t16
+        t17 = low
+        t18 = arr[t17]
+        t2 = t18
+        t16 = t2
+        t17 = t1
+        t19 = i + 1
+        i = t19
+
+Block 6:
+
+
+Flow Graph:
+0: 6 1 
+1: 2 
+2: 2 3 
+3: 5 4 
+4: 2 
+5: 6 
+6: 
+
+DAG:
+Block 0:
+  OP: CMP
+  ResVars: t0_0
+  child 1:
+    NAME: low
+  child 2:
+    NAME: high
+
+  OP: CMP
+  ResVars: t1_0
+  child 1: (reference) t0_0
+  child 2:
+    NAME: 10
+
+  OP: GOTO (6)
+  cond: t1_0
+
+Block 1:
+  OP: ASSIGN
+  ResVars: pivot_0
+  child 1: NAME: 0
+
+  OP: ASSIGN
+  ResVars: t2_0
+  child 1: NAME: low
+
+  OP: ARRAY_ACCESS
+  ResVars: t3_0
+  child 1: NAME: arr
+  child 2: (reference) t2_0
+
+  OP: ASSIGN
+  ResVars: pivot_1
+  child 1: (reference) t3_0
+
+  OP: ASSIGN
+  ResVars: i_0
+  child 1: NAME: low
+
+  OP: +
+  ResVars: t4_0
+  child 1: NAME: low
+  child 2: NAME: 1
+
+  OP: ASSIGN
+  ResVars: j_0
+  child 1: (reference) t4_0
+
+Block 3:
+  OP: ASSIGN
+  ResVars: t7_0
+  child 1: NAME: j
+
+  OP: ARRAY_ACCESS
+  ResVars: t8_0
+  child 1: NAME: arr
+  child 2: (reference) t7_0
+
+  OP: CMP
+  ResVars: t9_0
+Block 0:
+  OP: CMP
+  ResVars: t0_0
+  child 1:
+    NAME: low
+  child 2:
+    NAME: high
+
+  OP: CMP
+  ResVars: t1_0
+  child 1: (reference) t0_0
+  child 2:
+    NAME: 10
+
+  OP: GOTO (6)
+  cond: t1_0
+
+Block 1:
+  OP: ASSIGN
+  ResVars: pivot_0
+  child 1: NAME: 0
+
+  OP: ASSIGN
+  ResVars: t2_0
+  child 1: NAME: low
+
+  OP: ARRAY_ACCESS
+  ResVars: t3_0
+  child 1: NAME: arr
+  child 2: (reference) t2_0
+
+  OP: ASSIGN
+  ResVars: pivot_1
+  child 1: (reference) t3_0
+
+  OP: ASSIGN
+  ResVars: i_0
+  child 1: NAME: low
+
+  OP: +
+  ResVars: t4_0
+  child 1: NAME: low
+  child 2: NAME: 1
+
+  OP: ASSIGN
+  ResVars: j_0
+  child 1: (reference) t4_0
+
+Block 3:
+  OP: ASSIGN
+  ResVars: t7_0
+  child 1: NAME: j
+
+  OP: ARRAY_ACCESS
+  ResVars: t8_0
+  child 1: NAME: arr
+  child 2: (reference) t7_0
+
+  OP: CMP
+  ResVars: t9_0
+  child 1: (reference) t8_0
+  child 2: NAME: pivot
+
+  OP: GOTO (5)
+  cond: t9_0
+
+Block 4:
+  OP: +
+  ResVars: t10_0
+  child 1: NAME: i
+  child 2: NAME: 1
+
+  OP: ASSIGN
+  ResVars: i_1
+  child 1: (reference) t10_0
+
+  OP: ASSIGN
+  ResVars: t11_0
+  child 1: (reference) i_1
+
+  OP: ARRAY_ACCESS
+  ResVars: t12_0
+  child 1: NAME: arr
+  child 2: (reference) t11_0
+
+  OP: ASSIGN
+  ResVars: t1_1 
+  child 1: (reference) t12_0
+
+  OP: ASSIGN
+  ResVars: t13_0
+  child 1: NAME: j
+
+  OP: ARRAY_ACCESS
+  ResVars: t14_0
+  child 1: NAME: arr
+  child 2: (reference) t13_0
+
+  OP: ASSIGN
+  ResVars: t2_1 
+  child 1: (reference) t14_0
+
+  OP: ASSIGN
+  ResVars: t12_1  
+  child 1: (reference) t2_1
+
+  OP: ASSIGN
+  ResVars: t14_1 
+  child 1: (reference) t1_1
+
+  OP: +
+  ResVars: j_1
+  child 1: NAME: j
+  child 2: NAME: 1
+
+  OP: GOTO (2)
+
+Block 5:
+  OP: ASSIGN
+  ResVars: t15_0
+  child 1: NAME: i
+
+  OP: ARRAY_ACCESS
+  ResVars: t16_0
+  child 1: NAME: arr
+  child 2: (reference) t15_0
+
+  OP: ASSIGN
+  ResVars: t1_2 
+  child 1: (reference) t16_0
+
+  OP: ASSIGN
+  ResVars: t17_0
+  child 1: NAME: low
+
+  OP: ARRAY_ACCESS
+  ResVars: t18_0
+  child 1: NAME: arr
+  child 2: (reference) t17_0
+
+  OP: ASSIGN
+  ResVars: t2_2 
+  child 1: (reference) t18_0
+
+  OP: ASSIGN
+  ResVars: t16_1 
+  child 1: (reference) t2_2
+
+  OP: ASSIGN
+  ResVars: t17_1 
+  child 1: (reference) t1_2
+
+  OP: +
+  ResVars: t19_0
+  child 1: NAME: i
+  child 2: NAME: 1
+
+  OP: ASSIGN
+  ResVars: i_2
+  child 1: (reference) t19_0
+
+
+
+Block 6:
+
+
+  child 1: (reference) t8_0
+  child 2: NAME: pivot
+
+  OP: GOTO (5)
+  cond: t9_0
+
+Block 4:
+  OP: +
+  ResVars: t10_0
+  child 1: NAME: i
+  child 2: NAME: 1
+
+  OP: ASSIGN
+  ResVars: i_1
+  child 1: (reference) t10_0
+
+  OP: ASSIGN
+  ResVars: t11_0
+  child 1: (reference) i_1
+
+  OP: ARRAY_ACCESS
+  ResVars: t12_0
+  child 1: NAME: arr
+  child 2: (reference) t11_0
+
+  OP: ASSIGN
+  ResVars: t1_1 
+  child 1: (reference) t12_0
+
+  OP: ASSIGN
+  ResVars: t13_0
+  child 1: NAME: j
+
+  OP: ARRAY_ACCESS
+  ResVars: t14_0
+  child 1: NAME: arr
+  child 2: (reference) t13_0
+
+  OP: ASSIGN
+  ResVars: t2_1 
+  child 1: (reference) t14_0
+
+  OP: ASSIGN
+  ResVars: t12_1  
+  child 1: (reference) t2_1
+
+  OP: ASSIGN
+  ResVars: t14_1 
+  child 1: (reference) t1_1
+
+  OP: +
+  ResVars: j_1
+  child 1: NAME: j
+  child 2: NAME: 1
+
+  OP: GOTO (2)
+
+Block 5:
+  OP: ASSIGN
+  ResVars: t15_0
+  child 1: NAME: i
+
+  OP: ARRAY_ACCESS
+  ResVars: t16_0
+  child 1: NAME: arr
+  child 2: (reference) t15_0
+
+  OP: ASSIGN
+  ResVars: t1_2 
+  child 1: (reference) t16_0
+
+  OP: ASSIGN
+  ResVars: t17_0
+  child 1: NAME: low
+
+  OP: ARRAY_ACCESS
+  ResVars: t18_0
+  child 1: NAME: arr
+  child 2: (reference) t17_0
+
+  OP: ASSIGN
+  ResVars: t2_2 
+  child 1: (reference) t18_0
+
+  OP: ASSIGN
+  ResVars: t16_1 
+  child 1: (reference) t2_2
+
+  OP: ASSIGN
+  ResVars: t17_1 
+  child 1: (reference) t1_2
+
+  OP: +
+  ResVars: t19_0
+  child 1: NAME: i
+  child 2: NAME: 1
+
+  OP: ASSIGN
+  ResVars: i_2
+  child 1: (reference) t19_0
+
+
+
+Block 6:
+

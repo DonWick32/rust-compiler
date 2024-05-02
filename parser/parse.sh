@@ -2,9 +2,9 @@
 
 lex lex.l
 
-yacc -v -d -g -t --report=states,itemsets parser.y
+yacc -v -d parser.y
 #sudo apt install graphviz
 #dot y.dot -T png -o y.png
-gcc y.tab.c -ll -w
+gcc y.tab.c -w
 
-./a.out<input.txt
+./a.out<pls.txt
